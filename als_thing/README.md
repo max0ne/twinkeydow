@@ -11,7 +11,7 @@ npm i
 
 2. get your starred repos, it's gonna format your stars to csv, save it to `data/user.csv`
 ```
-./node_modules/.bin/ts-node get_stars.ts > data/user.csv
+./node_modules/.bin/ts-node get_stars.ts <your user name here> > data/user.csv
 ```
 
 3. run spark thing, before you need to install bunch of spark dependencies.
