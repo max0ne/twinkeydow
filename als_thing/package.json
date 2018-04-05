@@ -4,7 +4,9 @@
   "description": "try this thing https://medium.com/@HubbaDev/building-a-recommendation-engine-with-aws-data-pipeline-elastic-mapreduce-and-spark-ad886b0a1434",
   "main": "index.js",
   "dependencies": {
-    "axios": "^0.18.0"
+    "@types/lodash": "^4.14.106",
+    "axios": "^0.18.0",
+    "lodash": "^4.17.5"
   },
   "devDependencies": {
     "ts-node": "^5.0.1",

@@ -14,12 +14,7 @@ async function main() {
 
   for (const rid of repo_ids) {
     try {
-      const resp = await axios.get(`https://api.github.com/repositories/${rid}`, {
-        auth: {
-          username: 'max0ne',
-          password: 'monetary-at-last-1-star',
-        },
-      });
+      const resp = await axios.get(`https://api.github.com/repositories/${rid}`);
       const { full_name, html_url, description, language } = resp.data;
       console.log(full_name, language);
       console.log(description);
