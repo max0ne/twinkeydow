@@ -5,7 +5,8 @@ np_features = np.load('productFeatures.npy')
 np_la_norm = np.load('prod_feature_norm.npy')
 
 def similar(repoid):
-    
+    if np_features:
+        pass
 
 def handle(event, context):
     np_features = np.load('productFeatures.npy')
