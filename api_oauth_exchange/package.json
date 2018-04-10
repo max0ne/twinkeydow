@@ -1,5 +1,5 @@
 {
-  "name": "api_oauth_exchange",
+  "name": "api-oauth-exchange",
   "version": "1.0.0",
   "description": "handle github oauth redirect, exchange for github access token",
   "main": "index.js",

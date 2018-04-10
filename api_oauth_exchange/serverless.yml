@@ -1,4 +1,4 @@
-service: api_oauth_exchange
+service: api-oauth-exchange
 
 provider:
   name: aws

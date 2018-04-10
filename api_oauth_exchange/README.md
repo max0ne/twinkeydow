@@ -1,4 +1,4 @@
-api_oauth_exchange
+api-oauth-exchange
 ---
 
 Handles Github OAuth code grant flow callback, do a token exchange, respond access_token to frontend.
@@ -8,7 +8,7 @@ Handles Github OAuth code grant flow callback, do a token exchange, respond acce
 1. setup environment variable file `env.yml`
 1. 
 ```
-npx serverless deploy
+npx sls deploy
 ```
 
 ## Environment Variable
