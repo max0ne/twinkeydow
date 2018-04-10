@@ -4,7 +4,23 @@ import './css/index.css';
 import App from './component/App';
 import registerServiceWorker from './registerServiceWorker';
 
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import rootReducer from './redux/reducer';
+// import * as middleware from './redux/middleware';
+
 import 'semantic-ui-css/semantic.min.css';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+/* eslint-disable no-underscore-dangle */
+const store = createStore(rootReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+  // applyMiddleware(setTokenMiddleware.middleware),
+);
+/* eslint-enable */
+
+ReactDOM.render((
+  <Provider store={store}>
+    <App />
+  </Provider>
+), document.getElementById('root'));
 registerServiceWorker();
