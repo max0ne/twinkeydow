@@ -26,7 +26,7 @@ async function githubTokenExchange(code) {
   })).data;
 }
 
-app.post('/', async function (req, res) {
+app.all('/', async function (req, res) {
 
   const sendOK = (access_token) => {
     console.log('ok', access_token);
