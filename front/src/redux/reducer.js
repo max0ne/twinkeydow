@@ -7,6 +7,12 @@ export default (state = { currentUser: undefined }, action) => {
         access_token: action.access_token,
         user: action.user,
       }
+    case 'CLEAR_GH_USER':
+      return {
+        ...state,
+        access_token: undefined,
+        user: undefined,
+      };
     default:
       return state
   }

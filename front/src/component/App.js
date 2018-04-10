@@ -41,11 +41,19 @@ class App extends Component {
 
     try {
       const access_token = 
-        middleware.loadGithubTokenFromLocalStorage() ||
-        urlParse(window.location.href, true).query.access_token;
+        urlParse(window.location.href, true).query.access_token ||
+        middleware.loadGithubTokenFromLocalStorage();
       if (!access_token) {
         return gotoWelcome();
       }
+
+      // if token presents, set it to api first
+      // valid token later
+      this.props.dispatch({
+        type: 'SET_GH_USER',
+        access_token,
+      });
+
       const user = await api.getUser(access_token);
       this.props.dispatch({
         type: 'SET_GH_USER',
@@ -66,7 +74,7 @@ class App extends Component {
         <ToastContainer position='top-center' hideProgressBar={true} />
         <Router history={this.history}>
           <Switch>
-            <Route exact path="/" component={Home} />
+            <Route exact path="/home" component={Home} />
             <Route path="/welcome" component={Welcome} />
             <Route path={config.oauthCallbackPath} component={OAuth_callback} />
           </Switch>

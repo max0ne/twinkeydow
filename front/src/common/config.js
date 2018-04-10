@@ -1,6 +1,6 @@
 export default {
   frontendBaseURL: 'http://localhost:3000',
-  githubClientID: 'Iv1.4f3b2688d7d56374',
+  githubClientID: 'c1374dcd8168bbe8cb1d',
 
   oauthCallbackPath: '/oauth_done',
 
@@ -9,4 +9,6 @@ export default {
 
   // should match `api_oauth_exchange/env.yml`
   githubOauthState: 'pispMrpkKVhCaH8Akk',
+
+  similarRepoAPIURL: 'https://x72omd1he6.execute-api.us-east-1.amazonaws.com/dev/repo/similar',
 };

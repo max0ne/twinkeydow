@@ -5,6 +5,10 @@ export const ghClient = axios.create({
   baseURL: "https://api.github.com",
 });
 
+export const similarRepoClient = axios.create({
+  baseURL: config.similarRepoAPIURL,
+});
+
 export const setGithubToken = (token) => {
   ghClient.defaults.headers["Authorization"] = `Bearer ${token}`;
 }
@@ -16,4 +20,16 @@ export async function githubTokenExchange(code) {
 
 export async function getUser(access_token) {
   return (await ghClient.get(`/user?access_token=${access_token}`)).data
+}
+
+export async function getUserStars(page) {
+  return (await ghClient.get('/user/starred')).data;
+}
+
+export async function getSimilar(rid) {
+  return (await similarRepoClient.get(`/?rid=${rid}`)).data;
+}
+
+export async function getRepoDetail(rid) {
+  return (await ghClient.get(`repositories/${rid}`)).data;
 }

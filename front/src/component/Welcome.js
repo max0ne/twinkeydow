@@ -3,7 +3,6 @@ import { Button, Icon } from 'semantic-ui-react';
 
 import '../css/Welcome.css';
 import config from '../common/config';
-import * as api from '../common/api';
 
 export default class Welcome extends Component {
   render() {
