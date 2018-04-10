@@ -5,16 +5,16 @@ import App from './component/App';
 import registerServiceWorker from './registerServiceWorker';
 
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import rootReducer from './redux/reducer';
-// import * as middleware from './redux/middleware';
+import * as middleware from './redux/middleware';
 
 import 'semantic-ui-css/semantic.min.css';
 
 /* eslint-disable no-underscore-dangle */
 const store = createStore(rootReducer,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-  // applyMiddleware(setTokenMiddleware.middleware),
+  applyMiddleware(middleware.saveGithubToken),
 );
 /* eslint-enable */
 

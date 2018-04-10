@@ -6,7 +6,7 @@ export const loadGithubTokenFromLocalStorage = () => {
   return window.localStorage.getItem(TokenLocalstorageKey);
 }
 
-export const middleware = store => next => action => {
+export const saveGithubToken = store => next => action => {
   const result = next(action)
 
   if (action.type === 'SET_GH_USER') {

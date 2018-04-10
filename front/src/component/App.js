@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { createBrowserHistory } from 'history'
 import '../css/App.css';
 
@@ -38,12 +39,13 @@ class App extends Component {
       }
     };
 
-    const token = middleware.loadGithubTokenFromLocalStorage();
-    if (!token) {
-      return gotoWelcome();
-    }
     try {
-      const access_token = middleware.loadGithubTokenFromLocalStorage();
+      const access_token = 
+        middleware.loadGithubTokenFromLocalStorage() ||
+        urlParse(window.location.href, true).query.access_token;
+      if (!access_token) {
+        return gotoWelcome();
+      }
       const user = await api.getUser(access_token);
       this.props.dispatch({
         type: 'SET_GH_USER',
@@ -53,6 +55,7 @@ class App extends Component {
       gotoHome();
     }
     catch (err) {
+      console.log(err);
       return gotoWelcome();
     }
   }
@@ -73,4 +76,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default connect()(App);
