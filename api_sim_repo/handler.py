@@ -30,6 +30,7 @@ def compute_recommend_repo(repo_id, feats, limit):
 def handle(event, context):
     def response(status, body):
         return {
+            "headers": { "Access-Control-Allow-Origin": "*" },
             "statusCode": status,
             "body": json.dumps(body)
         }

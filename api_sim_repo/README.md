@@ -18,5 +18,5 @@ rm -rf aws-lambda-numpy.zip aws-lambda-numpy
 
 2.
 ```
-sls deploy
+npx sls deploy
 ```
