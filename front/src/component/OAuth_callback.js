@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
-export default class OAuth_callback extends Component {
+export default class Home extends Component {
   render() {
-    return <div />;
+    return <div>Validating OAuth callback...</div>;
   }
 }
