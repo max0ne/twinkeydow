@@ -28,7 +28,7 @@ train_file.repoid = train_file.repoid.astype(int)
 # train_file.head()
 
 os.environ["SPARK_HOME"] = SPARK_HOME
-findspark.init()
+# findspark.init("/usr/lib/spark")
 
 sc = SparkContext(appName="RR")
 sqlContext = SQLContext(sc)
