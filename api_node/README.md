@@ -22,6 +22,11 @@ Handles lookup of user based recommendations from `user_recommend` collection
 npx sls deploy
 ```
 
+## Local Development
+```
+npx sls offline start --port 4000
+```
+
 ## Environment Variable
 
 - GITHUB_OAUTH_STATE
