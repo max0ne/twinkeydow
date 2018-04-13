@@ -28,7 +28,7 @@ async function handle(req, res) {
   }
 
   try {
-    const data = await githubAPI.tokenExchange(code);
+    const data = await githubAPI.tokenExchange(GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, code);
     const { access_token, error } = data;
     if (access_token) {
       return sendOK(access_token);

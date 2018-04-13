@@ -5,7 +5,7 @@ export default {
   oauthCallbackPath: '/oauth_done',
 
   // url of backend service to do oauth token exchange
-  oauthRedirectURL: 'https://tybwb1svbl.execute-api.us-east-1.amazonaws.com/dev',
+  oauthRedirectURL: 'https://zt4r2xqfmb.execute-api.us-east-1.amazonaws.com/dev/oauth',
 
   // should match `api_oauth_exchange/env.yml`
   githubOauthState: 'pispMrpkKVhCaH8Akk',
