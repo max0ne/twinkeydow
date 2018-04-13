@@ -24,20 +24,20 @@ npx sls deploy
 
 ## Environment Variable
 
-1. GITHUB_OAUTH_STATE
+- GITHUB_OAUTH_STATE
 > OAuth state, should match this variable in frontend project.
 
-1. GITHUB_CLIENT_ID
+- GITHUB_CLIENT_ID
 > Get it from [Github App Setting](https://github.com/settings/apps/twin)
 
-1. GITHUB_CLIENT_SECRET
+- GITHUB_CLIENT_SECRET
 > Get it from [Github App Setting](https://github.com/settings/apps/twin)
 
-1. FRONT_END_URL
+- FRONT_END_URL
 > URL of frontend page
 
-1. MONGO_URL
+- MONGO_URL
 > MongoDB url, including username, password, port, dbnames
 
-1. MONGO_DB_NAME
+- MONGO_DB_NAME
 > MongoDB db name
