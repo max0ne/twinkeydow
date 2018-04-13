@@ -11,9 +11,11 @@
   "dependencies": {
     "axios": "^0.18.0",
     "express": "^4.16.3",
+    "mongodb": "^3.0.6",
     "serverless-http": "^1.5.5"
   },
   "devDependencies": {
+    "env-yaml": "^0.1.2",
     "serverless-offline": "^3.20.1"
   }
 }

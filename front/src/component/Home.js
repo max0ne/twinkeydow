@@ -34,7 +34,7 @@ class Home extends Component {
     const userStars = await api.getUserStars();
     this.setState({ userStars });
     
-    const userStarIds = _.map(userStars, 'id');
+    const userStarIds = _.map(userStars, 'id').filter((_, idx) => idx === 0);
     userStarIds.forEach(async (rid) => {
       const similars = await api.getSimilar(rid);
       similars.forEach(async (simObj) => {
@@ -56,39 +56,26 @@ class Home extends Component {
     });
   }
 
+  renderUserStar(repo) {
+    return (
+      <Item key={repo.id}>
+        <Item.Image size='tiny' src={(repo.owner || {}).avatar_url} circular={true} />
+        <Item.Content>
+          <Item.Header as='a' href={repo.url}>{repo.full_name}</Item.Header>
+          <Item.Meta>{`${repo.owner.login}/${repo.description}`}</Item.Meta>
+          <Item.Extra>{(repo.topics || []).join(' ')}</Item.Extra>
+        </Item.Content>
+      </Item>
+    );
+  }
+
   render() {
     return (
-      <div>
-        <pre>{JSON.stringify(this.state.userStars, undefined, 2)}</pre>
-        <pre>{JSON.stringify(this.state.recommends, undefined, 2)}</pre>
-      </div>
-      // <Item.Group>
-      //   <Item>
-      //     <Item.Image size='tiny' src='/assets/images/wireframe/image.png' />
-
-      //     <Item.Content>
-      //       <Item.Header as='a'>Header</Item.Header>
-      //       <Item.Meta>Description</Item.Meta>
-      //       <Item.Description>
-      //         <Image src='/assets/images/wireframe/short-paragraph.png' />
-      //       </Item.Description>
-      //       <Item.Extra>Additional Details</Item.Extra>
-      //     </Item.Content>
-      //   </Item>
-
-      //   <Item>
-      //     <Item.Image size='tiny' src='/assets/images/wireframe/image.png' />
-
-      //     <Item.Content>
-      //       <Item.Header as='a'>Header</Item.Header>
-      //       <Item.Meta>Description</Item.Meta>
-      //       <Item.Description>
-      //         <Image src='/assets/images/wireframe/short-paragraph.png' />
-      //       </Item.Description>
-      //       <Item.Extra>Additional Details</Item.Extra>
-      //     </Item.Content>
-      //   </Item>
-      // </Item.Group>
+      <Item.Group>
+        {
+          this.state.userStars.map(this.renderUserStar)
+        }
+      </Item.Group>
     );
   }
 }
