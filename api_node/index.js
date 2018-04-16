@@ -1,6 +1,9 @@
 const serverless = require('serverless-http');
 const express = require('express');
 const app = express();
+const cors = require('cors');
+
+app.use(cors());
 
 app.all('/oauth', require('./routes/oauth'));
 app.get('/user_rcmd', require('./routes/user_rcmd'));

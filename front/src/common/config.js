@@ -7,6 +7,8 @@ export default {
   // url of backend service to do oauth token exchange
   oauthRedirectURL: 'https://zt4r2xqfmb.execute-api.us-east-1.amazonaws.com/dev/oauth',
 
+  userBasedRecommendURL: 'https://zt4r2xqfmb.execute-api.us-east-1.amazonaws.com/dev/user_rcmd',
+
   // should match `api_oauth_exchange/env.yml`
   githubOauthState: 'pispMrpkKVhCaH8Akk',
 

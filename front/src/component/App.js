@@ -20,6 +20,7 @@ import {
   Switch,
   Route
 } from 'react-router-dom';
+import { toast, toastError } from '../common/util';
 
 class App extends Component {
 
@@ -67,8 +68,20 @@ class App extends Component {
       console.log(err);
       return gotoWelcome();
     }
+
+    //  no ui for this so just put it here for now
+    this.getUserBasedRecommends();
   }
-  
+
+  async getUserBasedRecommends() {
+    try {
+      console.log('user based recommends', await api.getUserBasedRecommend());
+    }
+    catch (err) {
+      toastError(err);
+    }
+  }
+
   render() {
     return (
       <div className="app">

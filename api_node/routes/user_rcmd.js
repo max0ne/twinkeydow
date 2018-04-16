@@ -53,7 +53,7 @@ module.exports = async function(req, res) {
     await handle(req, res, db);
   } catch (err) {
     console.error('err caught', err);
-    res.status(500).send(err);
+    res.status(500).send(err.toString());
   }
 
   client && await client.close();
