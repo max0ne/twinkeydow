@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { Item, Rating, Popup, Header, Icon } from 'semantic-ui-react';
+import { Item, Rating, Popup, Header } from 'semantic-ui-react';
 
 import * as api from '../common/api';
 import * as util from '../common/util';
@@ -49,24 +49,21 @@ class Home extends Component {
       });
     }
 
-    _.map(userStars, 'id').forEach(this.populateSimilarRepo);
+    if (!_.some(await _.map(userStars, 'id').map(this.populateSimilarRepo), _.identity)) {
+      this.setState({
+        noRecommendAvailable: true,
+      });
+    }
   }
 
   async populateSimilarRepo(rid) {
     const similars = await api.getSimilar(rid);
-    if (similars.length === 0) {
-      this.setState({
-        noRecommendAvailable: true,
-      });
-    } else {
-      this.setState({
-        noRecommendAvailable: false,
-      });
-    }
 
     // do it in sequence hence for...of
     for (const simObj of similars) {
       try {
+        const repoDetail = await api.getRepoDetail(simObj.rid);
+        
         // already recommended this repo based on some other repo
         if (this.state.recommends.some((recommend) => recommend.rid === simObj.rid)) {
           continue;
@@ -74,8 +71,6 @@ class Home extends Component {
         if (this.state.userStars.some((repo) => repo.id === simObj.rid)) {
           continue;
         }
-
-        const repoDetail = await api.getRepoDetail(simObj.rid);
         this.setState({
           recommends: [
             ...this.state.recommends,
@@ -93,6 +88,7 @@ class Home extends Component {
       }
       catch (err) { console.error(err); }
     }
+    return similars.length > 0;
   }
 
   renderUserStar(repo) {
@@ -146,7 +142,7 @@ class Home extends Component {
       <div>
         <Header as='h1' icon textAlign='center'>
           <Header.Content>
-            🤷
+            <span role='img' aria-label='not found'>🤷</span>
         </Header.Content>
         </Header>
         <Header as='h3' textAlign='center'>
@@ -159,7 +155,7 @@ class Home extends Component {
   }
 
   render() {
-    if (this.state.noRecommendAvailable) {
+    if (this.state.noRecommendAvailable && this.state.recommends.length === 0) {
       return this.renderNoRecommendAvailable();
     }
     return (
