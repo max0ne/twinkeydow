@@ -12,5 +12,5 @@ export default {
   // should match `api_oauth_exchange/env.yml`
   githubOauthState: 'pispMrpkKVhCaH8Akk',
 
-  similarRepoAPIURL: 'https://x72omd1he6.execute-api.us-east-1.amazonaws.com/dev/repo/similar',
+  similarRepoAPIURL: 'https://8z5xdosph8.execute-api.us-east-1.amazonaws.com/dev/repo/similar',
 };
