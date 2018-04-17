@@ -1,7 +1,7 @@
 const common = require('../common/common');
 const githubAPI = require('../common/github_api');
 
-const SERVICE_BASE_URL = 'http://localhost:4000';
+const SERVICE_BASE_URL = common.envMust('SERVICE_BASE_URL', true);
 
 /**
  * handles oauth callback from github

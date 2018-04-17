@@ -45,8 +45,8 @@ module.exports = async function(req, res) {
   let client;
   try {
     // 1. get db
-    const MONGO_URL = common.secretMust('mongodb_credential', 'MONGO_URL', true);
-    const MONGO_DB_NAME = common.secretMust('mongodb_credential', 'MONGO_DB_NAME', true);
+    const MONGO_URL = await common.secretMust('mongodb_credential', 'MONGO_URL', true);
+    const MONGO_DB_NAME = await common.secretMust('mongodb_credential', 'MONGO_DB_NAME', true);
 
     client = await mongodb.MongoClient.connect(MONGO_URL);
     const db = client.db(MONGO_DB_NAME);
