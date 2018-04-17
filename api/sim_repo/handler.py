@@ -1,17 +1,34 @@
 import json
 import sys
 import os
+from io import BytesIO
 
+import boto3
 from pymongo import MongoClient
 import numpy as np
 from numpy import linalg as LA
 
-prod_feature_norm_name = "prod_feature_norm.npy"
-productFeatures_name = "productFeatures.npy"
-repo_ids_name = "repo_ids.npy"
+# code generated from AWS Secret Manager
+def get_db_credentials():
+    secret_name = "mongodb_credential"
+    endpoint_url = "https://secretsmanager.us-east-1.amazonaws.com"
+    region_name = "us-east-1"
 
-MONGO_URL = os.environ.get('MONGO_URL')
-MONGO_DB_NAME = os.environ.get('MONGO_DB_NAME')
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name,
+        endpoint_url=endpoint_url
+    )
+
+    get_secret_value_response = client.get_secret_value(
+        SecretId=secret_name
+    )
+    secret = get_secret_value_response['SecretString']
+    config_json = json.loads(secret)
+    return config_json["MONGO_URL"], config_json["MONGO_DB_NAME"]
+
+MONGO_URL, MONGO_DB_NAME = get_db_credentials()
 db = MongoClient(MONGO_URL).get_database(MONGO_DB_NAME)
 
 # env var -> mongo -> (bucketName, bucketKey, shardNumber)
@@ -42,8 +59,6 @@ def load_feats(rid, bucketName, bucketKey, shardNumber):
     try:
         # read s3 file directly into memory
         # code from https://dluo.me/s3databoto3
-        from io import BytesIO
-        import boto3
         client = boto3.client('s3')
         def read_s3_into_np_arr(fname):
             obj = client.get_object(Bucket=bucketName, Key=bucketKey + '/' + fname)
