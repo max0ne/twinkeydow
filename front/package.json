@@ -2,7 +2,7 @@
   "name": "twifront",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://max0ne.github.io/twinkeydow",
+  "homepage": "https://max0ne.github.io/twinkeydow/",
   "dependencies": {
     "axios": "^0.18.0",
     "lodash": "^4.17.5",

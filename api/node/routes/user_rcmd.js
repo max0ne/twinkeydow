@@ -2,14 +2,11 @@ const mongodb = require('mongodb');
 const common = require('../common/common');
 const githubAPI = require('../common/github_api');
 
-const MONGO_URL = common.envMust('MONGO_URL', true);
-const MONGO_DB_NAME = common.envMust('MONGO_DB_NAME', true);
-
 /**
- * 
- * @param {*} req 
- * @param {express.res} res 
+ * @param {Express.Request} req
+ * @param {Express.Response} res 
  * @param {mongodb.MongoClient.db} db
+ * @return {Promise<void>}
  */
 async function handle(req, res, db) {
   // 2. get github token from query
@@ -48,6 +45,9 @@ module.exports = async function(req, res) {
   let client;
   try {
     // 1. get db
+    const MONGO_URL = common.secretMust('mongodb_credential', 'MONGO_URL', true);
+    const MONGO_DB_NAME = common.secretMust('mongodb_credential', 'MONGO_DB_NAME', true);
+
     client = await mongodb.MongoClient.connect(MONGO_URL);
     const db = client.db(MONGO_DB_NAME);
     await handle(req, res, db);
@@ -57,4 +57,4 @@ module.exports = async function(req, res) {
   }
 
   client && await client.close();
-}
+};

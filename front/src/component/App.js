@@ -91,7 +91,7 @@ class App extends Component {
           <Switch>
             <Route exact path="/home" component={Home} />
             <Route path="/welcome" component={Welcome} />
-            <Route path={config.oauthCallbackPath} component={OAuth_callback} />
+            <Route path="/oauth_done" component={OAuth_callback} />
           </Switch>
         </Router>
       </div>

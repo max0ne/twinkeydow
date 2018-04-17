@@ -8,7 +8,6 @@ provider:
 
 functions:
   main:
-    environment: ${file(./env.yml)}
     handler: index.handler
     events:
       - http: ANY /
