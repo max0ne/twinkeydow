@@ -6,9 +6,9 @@ import '../css/App.css';
 import { ToastContainer } from 'react-toastify';
 import * as urlParse from 'url-parse';
 
-import config from '../common/config';
 import * as middleware from '../redux/middleware';
 import * as api from '../common/api';
+import env from '../env';
 
 import Home from './Home';
 import OAuth_callback from './OAuth_callback';
@@ -20,13 +20,15 @@ import {
   Switch,
   Route
 } from 'react-router-dom';
-import { toast, toastError } from '../common/util';
+import { toastError } from '../common/util';
 
 class App extends Component {
 
   constructor() {
     super();
-    this.history = createBrowserHistory();
+    this.history = createBrowserHistory({
+      basename: env.basename,
+    });
   }
   
   async componentWillMount() {
@@ -87,9 +89,9 @@ class App extends Component {
       <div className="app">
         <ToastContainer position='top-center' hideProgressBar={true} />
         <Navbar />
-        <Router history={this.history}>
+        <Router basename={env.basename} history={this.history}>
           <Switch>
-            <Route exact path="/home" component={Home} />
+            <Route path="/home" component={Home} />
             <Route path="/welcome" component={Welcome} />
             <Route path="/oauth_done" component={OAuth_callback} />
           </Switch>
