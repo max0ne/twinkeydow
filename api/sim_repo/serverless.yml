@@ -7,6 +7,9 @@ provider:
     - Effect: "Allow"
       Action: "s3:Get*"
       Resource: "*"
+    - Effect: "Allow"
+      Action: "secretsmanager:GetSecretValue"
+      Resource: "arn:aws:secretsmanager:*:*:secret:mongodb_credential-FNzCJl"
 
 # you can add packaging information here
 package:
@@ -15,7 +18,6 @@ package:
 
 functions:
   main:
-    environment: ${file(./env.yml)}
     handler: handler.handle
     events:
       - http:
