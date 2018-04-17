@@ -3,6 +3,10 @@ service: api-sim-repo
 provider:
   name: aws
   runtime: python2.7
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action: "s3:Get*"
+      Resource: "*"
 
 # you can add packaging information here
 package:

@@ -40,18 +40,20 @@ def load_config():
 
 def load_feats(rid, bucketName, bucketKey, shardNumber):
     try:
-        partition_id = str(rid % shardNumber)
-        productFeatures_name = 'productFeatures_'+partition_id+".npy"
-        prod_feature_norm_name = 'prod_feature_norm_'+partition_id+".npy"
-        repo_ids_name = 'repo_ids_'+partition_id+".npy"
-
+        # read s3 file directly into memory
+        # code from https://dluo.me/s3databoto3
+        from io import BytesIO
         import boto3
-        s3 = boto3.resource('s3')
-        [s3.Bucket(bucketName).download_file(bucketKey + '/' + fname, fname) for fname in (productFeatures_name, prod_feature_norm_name, repo_ids_name)]
+        client = boto3.client('s3')
+        def read_s3_into_np_arr(fname):
+            obj = client.get_object(Bucket=bucketName, Key=bucketKey + '/' + fname)
+            return np.load(BytesIO(obj['Body'].read()))
 
-        prod_feature_norm = np.load(prod_feature_norm_name)
-        productFeatures = np.load(productFeatures_name)
-        repo_ids = np.load(repo_ids_name)
+        # partition with rid is suppoed to be at `rid % shardNumber`
+        partition_id = str(rid % shardNumber)
+        prod_feature_norm = read_s3_into_np_arr('prod_feature_norm_'+partition_id+".npy")
+        productFeatures = read_s3_into_np_arr('productFeatures_'+partition_id+".npy")
+        repo_ids = read_s3_into_np_arr('repo_ids_'+partition_id+".npy")
 
         return prod_feature_norm, productFeatures, repo_ids
     except Exception as err:
@@ -79,8 +81,8 @@ def handle(event, context):
         }
     
     # 0. param
-    rid = event['queryStringParameters'].get('rid')
-    limit = event['queryStringParameters'].get('limit') or 5
+    rid = event.get('queryStringParameters', {}).get('rid')
+    limit = event.get('queryStringParameters', {}).get('limit', 5)
     if rid is None:
         return response(400, "rid required")
     rid = int(rid)
