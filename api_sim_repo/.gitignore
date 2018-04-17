@@ -159,3 +159,4 @@ venv.bak/
 numpy/
 lib/
 numpy-1.10.4-py2.7.egg-info
+env.yml
