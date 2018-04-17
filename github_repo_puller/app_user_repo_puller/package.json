@@ -1,0 +1,17 @@
+{
+  "name": "app_user_repo_puller",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.224.1",
+    "mongodb": "^3.0.6",
+    "parse-link-header": "^1.0.1",
+    "request": "^2.85.0"
+  }
+}
