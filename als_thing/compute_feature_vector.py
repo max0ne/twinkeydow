@@ -10,9 +10,38 @@ from pyspark.mllib.linalg.distributed import CoordinateMatrix, MatrixEntry, RowM
 import numpy as np
 from numpy import linalg as LA
 import datetime
+from pymongo import MongoClient
+import json
 
+# config_file = open("/home/ec2-user/.config","r")
+# config_json = json.loads(config_file.read())
 
-PARTITION_SIZE = 100000
+secret_name = "mongodb_credential"
+endpoint_url = "https://secretsmanager.us-east-1.amazonaws.com"
+region_name = "us-east-1"
+
+session = boto3.session.Session()
+client = session.client(
+    service_name='secretsmanager',
+    region_name=region_name,
+    endpoint_url=endpoint_url
+)
+
+get_secret_value_response = client.get_secret_value(
+    SecretId=secret_name
+)
+
+secret = get_secret_value_response['SecretString']
+config_json = json.loads(secret)
+
+MONGO_URL = config_json["MONGO_URL"]
+MONGO_DB_NAME = config_json["MONGO_DB_NAME"]
+client = MongoClient(MONGO_URL)
+db = client[MONGO_DB_NAME]
+collection = db['global_config']
+config = collection.find_one({"config_name":"product_vector_config"})
+
+PARTITION_SIZE = config["body"]["shard_size"]
 SPARK_HOME = "/usr/lib/spark"
 OUTPUT_BUCKET_NAME = "cc-spark-product-feature-output"
 INPUT_BUCKET_NAME = 'cc-spark-test-data'
@@ -116,3 +145,7 @@ for x in range(0, partition_num):
     s3.Bucket(OUTPUT_BUCKET_NAME).upload_file(timeString+"/"+productFeaturesFileName,timeString+"/"+productFeaturesFileName)
     s3.Bucket(OUTPUT_BUCKET_NAME).upload_file(timeString+"/"+prod_feature_norm_FileName,timeString+"/"+prod_feature_norm_FileName)
     s3.Bucket(OUTPUT_BUCKET_NAME).upload_file(timeString+"/"+repo_ids_FileName,timeString+"/"+repo_ids_FileName)
+
+config["body"]["shardNumber"] = partition_num
+config["body"]["bucketInfo"]["key"] = timeString
+collection.update({"config_name":"product_vector_config"},config,upsert=True)
