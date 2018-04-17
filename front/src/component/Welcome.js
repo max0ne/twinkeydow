@@ -6,8 +6,7 @@ import config from '../common/config';
 
 export default class Welcome extends Component {
   render() {
-    // ?oauth_done_redirect=${window.location.href}
-    const githubOAuthURL = `${config.oauthLoginURL}`;
+    const githubOAuthURL = `${config.oauthLoginURL}?oauth_done_redirect=${window.location.href}`;
     return <Button as="a" href={githubOAuthURL}><Icon name="github"/>Login</Button>;
   }
 }
