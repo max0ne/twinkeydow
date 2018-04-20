@@ -49,7 +49,7 @@ function handleUserStarRepoData(){
   }
 
   s3.putObject({
-    Bucket: 'cc-registered-user-star-repo',
+    Bucket: 'cc-registered-user-star-repo-2',
     Key: OUTPUT_FILE_NAME,
     Body: buffer,
   },function (resp) {
