@@ -12,6 +12,7 @@ python handler.py
 0. setup vritual env, install dependencies
 ```
 virtualenv --python=`which python3` env
+source env/bin/activate
 pip install pymongo
 ```
 

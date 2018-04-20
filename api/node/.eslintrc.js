@@ -5,7 +5,7 @@ module.exports = {
         'google',
     ],
     'parserOptions': {
-        'ecmaVersion': 7,
+        'ecmaVersion': 2017,
     },
     'rules': {
         'padded-blocks': 0,

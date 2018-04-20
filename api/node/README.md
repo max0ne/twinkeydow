@@ -5,7 +5,7 @@ A bunch of node lambda apis put together in a single project, under a single exp
 
 ## Routes
 
-### [oauth](routes/oauth.js)
+### [oauth login](routes/oauth.js)
 Handles Github OAuth code grant flow callback, do a token exchange, respond access_token to frontend.
 
 ### [user_rcmd](routes/user_rcmd.js)
@@ -15,7 +15,7 @@ Handles lookup of user based recommendations from `user_recommend` collection
 
 1. make sure MongoDB is setup in mlab.com
 
-1. setup environment variable file `env.yml`
+1. [setup credentials in AWS Secret Manager](https://github.com/max0ne/twinkeydow/wiki/AWS-Secret-Manger)
 
 1. 
 ```

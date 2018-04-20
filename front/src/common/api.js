@@ -19,11 +19,6 @@ export const setGithubToken = (token) => {
   ghToken = token;
 }
 
-export async function githubTokenExchange(code) {
-  const url = `https://github.com/login/oauth/access_token?client_id=${config.githubClientID}&client_secret=${config.githubClientSecret}&code=${code}`;
-  return (await axios.post(url)).data.access_token;
-}
-
 export async function getUserBasedRecommend() {
   if (!ghToken) {
     throw new Error('github login required for `getUserBasedRecommend`');

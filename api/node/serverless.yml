@@ -1,0 +1,24 @@
+service: twin-node-api
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  region: us-east-1
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action: "secretsmanager:GetSecretValue"
+      Resource:
+        - "arn:aws:secretsmanager:*:*:secret:mongodb_credential-FNzCJl"
+        - "arn:aws:secretsmanager:*:*:secret:github_oauth-AaxpuG"
+
+functions:
+  main:
+    environment: ${file(./env.yml)} 
+    handler: index.handler
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'
+
+plugins:
+  - serverless-offline
