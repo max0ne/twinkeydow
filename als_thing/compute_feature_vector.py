@@ -43,8 +43,8 @@ config = collection.find_one({"config_name":"product_vector_config"})
 
 PARTITION_SIZE = config["body"]["shard_size"]
 SPARK_HOME = "/usr/lib/spark"
-OUTPUT_BUCKET_NAME = "cc-spark-product-feature-output"
-INPUT_BUCKET_NAME = 'cc-spark-test-data'
+OUTPUT_BUCKET_NAME = "cc-spark-product-feature-output-2"
+INPUT_BUCKET_NAME = 'cc-spark-test-data-2'
 KEY = '16kUser.csv'
 s3 = boto3.resource('s3')
 s3.Bucket(INPUT_BUCKET_NAME).download_file(KEY, '16kUser.csv')
