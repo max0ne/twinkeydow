@@ -9,8 +9,8 @@ provider:
     - Effect: "Allow"
       Action: "secretsmanager:GetSecretValue"
       Resource:
-        - "arn:aws:secretsmanager:*:*:secret:mongodb_credential-FNzCJl"
-        - "arn:aws:secretsmanager:*:*:secret:github_oauth-AaxpuG"
+        - "arn:aws:secretsmanager:*:*:secret:mongodb_credential-571ETz"
+        - "arn:aws:secretsmanager:*:*:secret:github_oauth-qcCLeq"
 
 functions:
   main:

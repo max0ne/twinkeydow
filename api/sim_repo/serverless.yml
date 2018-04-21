@@ -9,7 +9,7 @@ provider:
       Resource: "*"
     - Effect: "Allow"
       Action: "secretsmanager:GetSecretValue"
-      Resource: "arn:aws:secretsmanager:*:*:secret:mongodb_credential-FNzCJl"
+      Resource: "arn:aws:secretsmanager:*:*:secret:mongodb_credential-571ETz"
 
 # you can add packaging information here
 package:

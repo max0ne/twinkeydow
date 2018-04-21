@@ -15,6 +15,7 @@ const SERVICE_BASE_URL = common.envMust('SERVICE_BASE_URL', true);
  */
 async function handleOauthCallback(req, res) {
   let { oauth_done_redirect } = req.cookies;
+  oauth_done_redirect = oauth_done_redirect || common.envMust('DEFAULT_FRONT_END_URL', false);
   if (!oauth_done_redirect) {
     return res.status(500).send('oauth_done_redirect in cookie missing');
   }

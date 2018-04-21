@@ -28,21 +28,27 @@ npx sls offline start --port 4000
 ```
 
 ## Environment Variable
+- DEFAULT_FRONT_END_URL
+> Frontend to redirect to after OAuth if unable to find original frontend url from cookie, this happens sometimes when using incognito mode.
 
-- GITHUB_OAUTH_STATE
-> OAuth state, should match this variable in frontend project.
+- SERVICE_BASE_URL
+> The api-gateway url that this api is hosted on, only known after first deployment
 
-- GITHUB_CLIENT_ID
-> Get it from [Github App Setting](https://github.com/settings/apps/twin)
+## AWS Secrets Manager Managed Variables
 
-- GITHUB_CLIENT_SECRET
-> Get it from [Github App Setting](https://github.com/settings/apps/twin)
+- secret `github_oauth`
+  - GITHUB_OAUTH_STATE
+  > OAuth state, should match this variable in frontend project.
 
-- FRONT_END_URL
-> URL of frontend page
+  - GITHUB_CLIENT_ID
+  > Get it from [Github App Setting](https://github.com/settings/apps/twin)
 
-- MONGO_URL
-> MongoDB url, including username, password, port, dbnames
+  - GITHUB_CLIENT_SECRET
+  > Get it from [Github App Setting](https://github.com/settings/apps/twin)
 
-- MONGO_DB_NAME
-> MongoDB db name
+- secret `mongodb_credential`
+  - MONGO_URL
+  > MongoDB url, including username, password, port, dbnames
+
+  - MONGO_DB_NAME
+  > MongoDB db name
