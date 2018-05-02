@@ -30,12 +30,27 @@ export async function getUser(access_token) {
   return (await ghClient.get(`/user?access_token=${access_token}`)).data
 }
 
-export async function getUserStars(page) {
-  return (await ghClient.get('/user/starred')).data;
+function parseLink(link) {
+  // '<https://api.github.com/events?page=2>; rel="next", <https://api.github.com/events?page=10>; rel="last"'
+  const [, url1, tag1, url2, tag2] = link.split(/<(.+?)>;\s*rel="(.+?)",\s*<(.+?)>;\s*rel="(.+?)"/);
+  return {
+    [tag1]: url1,
+    [tag2]: url2,
+  };
 }
 
-export async function getSimilar(rid) {
-  return (await similarRepoClient.get(`/?rid=${rid}`)).data;
+export async function getUserStars(nextPageURL) {
+  const resp = await ghClient.get(nextPageURL || '/user/starred?page=1');
+  const { next, last } = parseLink(resp.headers.link || '');
+  return {
+    data: resp.data,
+    nextStarPageURL: last === nextPageURL ? undefined : next,
+  };
+}
+
+export async function getSimilar(rid, offset = 0, limit = 5) {
+  const sims = (await similarRepoClient.get(`/?rid=${rid}&limit=${offset + limit}`)).data;
+  return sims.slice(offset, sims.length);
 }
 
 export async function getRepoDetail(rid) {

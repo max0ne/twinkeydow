@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 
-import { Item, Rating, Popup, Header } from 'semantic-ui-react';
+import { Item, Rating, Popup, Header, Loader } from 'semantic-ui-react';
 
-import * as api from '../common/api';
 import * as util from '../common/util';
+import { ListoSource } from '../model/listo';
 
 class Home extends Component {
 
@@ -14,81 +13,22 @@ class Home extends Component {
     super();
     this.state = {
       // list of user starred repo objects
-      userStars: [],
-
-      // recommendation
-      // { basedOn: rid, score: number, rid: string }
-      recommends: [],
-
-      // rid -> repo detail
-      repoDetails: { },
-
-      noRecommendAvailable: false,
+      listos: [ ],
+      reachedEnd: false,
     }
 
     this.renderRecommendRepo = this.renderRecommendRepo.bind(this);
-    this.populateSimilarRepo = this.populateSimilarRepo.bind(this);
   }
-  
+
   async componentWillMount() {
-    try {
-      await this.populateUserStarredRepos();
-    }
-    catch (err) {
-      util.toastError(err);
-    }
-  }
-
-  async populateUserStarredRepos() {
-    const userStars = await api.getUserStars();
-    this.setState({ userStars });
-
-    if (userStars.length === 0) {
+    this.listoSource = new ListoSource(() => {
       this.setState({
-        noRecommendAvailable: true,
+        listos: this.listoSource.listos(),
+        reachedEnd: this.listoSource.reachedEnd,
       });
-    }
+    });
 
-    if (!_.some(await _.map(userStars, 'id').map(this.populateSimilarRepo), _.identity)) {
-      this.setState({
-        noRecommendAvailable: true,
-      });
-    }
-  }
-
-  async populateSimilarRepo(rid) {
-    const similars = await api.getSimilar(rid);
-
-    // do it in sequence hence for...of
-    for (const simObj of similars) {
-      try {
-        const repoDetail = await api.getRepoDetail(simObj.rid);
-        
-        // already recommended this repo based on some other repo
-        if (this.state.recommends.some((recommend) => recommend.rid === simObj.rid)) {
-          continue;
-        }
-        if (this.state.userStars.some((repo) => repo.id === simObj.rid)) {
-          continue;
-        }
-        this.setState({
-          recommends: [
-            ...this.state.recommends,
-            {
-              basedOn: rid,
-              score: simObj.sim,
-              rid: simObj.rid,
-            },
-          ],
-          repoDetails: {
-            ...this.state.repoDetails,
-            [simObj.rid]: repoDetail,
-          },
-        });
-      }
-      catch (err) { console.error(err); }
-    }
-    return similars.length > 0;
+    this.listoSource.grow(10);
   }
 
   renderUserStar(repo) {
@@ -107,29 +47,33 @@ class Home extends Component {
   /**
    * { basedOn: rid, score: number, rid: string }
    * 
-   * @param {object} recommend
-   * @param {string} recommend.rid
-   * @param {number} recommend.score
-   * @param {string} recommend.basedOn
+   * @param {object} rec
+   * @param {string} rec.from_rid
+   * @param {number} rec.to_rid
+   * @param {string} rec.score
+   * @param {string} rec.reason 'star' || 'show_more'
    */
-  renderRecommendRepo(recommend) {
-    const recommendRepo = this.state.repoDetails[recommend.rid];
-    const basedOnRepo = this.state.userStars.find((repo) => repo.id === recommend.basedOn);
+  renderRecommendRepo(rec) {
+    const recommendRepo = this.listoSource.repoDetails[rec.to_rid];
+    const basedOnRepo = this.listoSource.repoDetails[rec.from_rid];
     const repoView = (
       <Item key={recommendRepo.id}>
         <Item.Image size='tiny' src={(recommendRepo.owner || {}).avatar_url} circular={true} />
         <Item.Content>
           <Item.Meta>
             because you liked <a href={basedOnRepo.html_url} target="_blank">{basedOnRepo.full_name}</a>
-            <Popup position='right center' trigger={<Rating disabled={true} icon='star' rating={recommend.score * 5} maxRating={5} />}>
+            <Popup position='right center' trigger={<Rating disabled={true} icon='star' rating={rec.score * 5} maxRating={5} />}>
               <Popup.Content>
-                {recommend.score * 5} / 5
+                {rec.score * 5} / 5
               </Popup.Content>
             </Popup>
           </Item.Meta>
           <Item.Header as='a' href={recommendRepo.html_url} target="_blank">{recommendRepo.full_name}</Item.Header>
-          <Item.Meta>{`${recommendRepo.owner.login}/${recommendRepo.description}`}</Item.Meta>
+          <Item.Meta>{recommendRepo.description}</Item.Meta>
           <Item.Extra>{(recommendRepo.topics || []).join(' ')}</Item.Extra>
+          <Item.Extra as='a' onClick={() => this.listoSource.showMoreOf(recommendRepo.id)} target="_blank">
+            show me more like this
+          </Item.Extra>
         </Item.Content>
       </Item>
     );
@@ -154,14 +98,20 @@ class Home extends Component {
     );
   }
 
+  renderLoading() {
+    return <Loader />;
+  }
+
   render() {
-    if (this.state.noRecommendAvailable && this.state.recommends.length === 0) {
-      return this.renderNoRecommendAvailable();
+    if (this.state.listos.length === 0) {
+      return this.state.reachedEnd ? 
+        this.renderNoRecommendAvailable() :
+        this.renderLoading();
     }
     return (
       <Item.Group>
         {
-          this.state.recommends.map(this.renderRecommendRepo)
+          this.state.listos.map(this.renderRecommendRepo)
         }
       </Item.Group>
     );

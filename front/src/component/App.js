@@ -28,13 +28,17 @@ class App extends Component {
       if (!this.history) {
         return setTimeout(gotoWelcome, 100);
       }
-      this.history.push('/welcome');
+      if (!window.location.href.endsWith('/welcome')) {
+        this.history.push('/welcome');
+      }
     };
     const gotoHome = () => {
       if (!this.history) {
         return setTimeout(gotoHome, 100);
       }
-      this.history.push('/home');
+      if (!window.location.href.endsWith('/home')) {
+        this.history.push('/home');
+      }
     };
 
     try {
