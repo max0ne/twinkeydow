@@ -23,7 +23,7 @@ export async function getUserBasedRecommend() {
   if (!ghToken) {
     throw new Error('github login required for `getUserBasedRecommend`');
   }
-  return (await axios.get(`${config.userBasedRecommendURL}?ghToken=${ghToken}`)).data;
+  return (await axios.get(`${config.userBasedRecommendURL}?limit=20&ghToken=${ghToken}`)).data;
 }
 
 export async function getUser(access_token) {
