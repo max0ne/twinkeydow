@@ -13,9 +13,6 @@ import datetime
 from pymongo import MongoClient
 import json
 
-# config_file = open("/home/ec2-user/.config","r")
-# config_json = json.loads(config_file.read())
-
 secret_name = "mongodb_credential"
 endpoint_url = "https://secretsmanager.us-east-1.amazonaws.com"
 region_name = "us-east-1"
@@ -41,70 +38,97 @@ db = client[MONGO_DB_NAME]
 collection = db['global_config']
 config = collection.find_one({"config_name":"product_vector_config"})
 
-PARTITION_SIZE = config["body"]["shard_size"]
-SPARK_HOME = "/usr/lib/spark"
-OUTPUT_BUCKET_NAME = "cc-spark-product-feature-output"
-INPUT_BUCKET_NAME = 'cc-spark-test-data'
+# PARTITION_SIZE = config["body"]["shard_size"]
+# SPARK_HOME = "/usr/lib/spark"
+OUTPUT_BUCKET_NAME = config["body"]["bucketInfo"]["bucketName"]
+
+INPUT_BUCKET_NAME = config["body"]["bucketInfo"]["inputBucketName"]
 KEY = '16kUser.csv'
 s3 = boto3.resource('s3')
 s3.Bucket(INPUT_BUCKET_NAME).download_file(KEY, '16kUser.csv')
 
 train_file = pd.read_csv('16kUser.csv', index_col=None, sep=',',header=None)
-train_file.columns = ['uid', 'repoid', 'uname', 'reponame', 'date']
+train_file.columns = ['uid', 'repoid']
 train_file = train_file.drop_duplicates()
-train_file.head()
-
-# train_file.dropna(inplace=True)
-# train_file.repoid = train_file.repoid.astype(int)
+train_file.dropna(inplace=True)
+train_file.repoid = train_file.repoid.astype(int)
 # train_file.head()
 
+SPARK_HOME = "/usr/lib/spark"
 os.environ["SPARK_HOME"] = SPARK_HOME
 # findspark.init("/usr/lib/spark")
 
-user_file = pd.read_csv('16kUser.csv', index_col=None, sep=',') \
-    .drop_duplicates()
-user_file.columns = ['uid', 'repoid', 'uname', 'reponame', 'date']
+# train_file.columns = ['uid', 'repoid', 'uname', 'reponame', 'date']
+train_file.columns = ['uid', 'repoid']
+train_file = train_file.drop_duplicates()
+train_file.dropna(inplace=True)
+train_file.repoid = train_file.repoid.astype(int)
+#train_file.head()
+
+#-------------------------------------------------
+#user rdd create
+
+
+
+config = collection.find_one({"config_name":"register_user"})
+
+# PARTITION_SIZE = config["body"]["shard_size"]
+# SPARK_HOME = "/usr/lib/spark"
+OUTPUT_BUCKET_NAME = config["body"]["bucketInfo"]["bucketName"]
+
+INPUT_BUCKET_NAME = config["body"]["bucketInfo"]["inputBucketName"]
+KEY = 'registerd_user_star_repo.csv'
+s3 = boto3.resource('s3')
+s3.Bucket(INPUT_BUCKET_NAME).download_file(KEY, 'registerd_user_star_repo.csv')
+
+
+user_file = pd.read_csv('registerd_user_star_repo.csv', index_col=None, sep=',',header=None)
+user_file.columns = ['uid', 'repoid']
 user_file = user_file.drop_duplicates()
-user_file.head()
+user_file.dropna(inplace=True)
+user_file.repoid = user_file.repoid.astype(int)
+
+
+#the users that have alreday register out web app.
 
 
 
-# take only uid / repoid
+#------------
 train_file = train_file[['uid', 'repoid']]
-train_file.head()
-
-# same thing for user file
+#train_file.head()
 user_file = user_file[['uid', 'repoid']]
-user_file.head()
 
+
+# import findspark
+# findspark.init("/usr/local/spark-2.3.0")
+
+from pyspark import SparkContext
+from pyspark.sql import SQLContext
+
+from pyspark.mllib.recommendation import ALS
 
 sc = SparkContext(appName="RR")
 sqlContext = SQLContext(sc)
 
-
 def first_two_column(row):
     return (int(row[0]), int(row[1]), 1.0)
-
-# training_rdd = sqlContext.createDataFrame(train_file).rdd.map(first_two_column)
 
 training_rdd = sqlContext.createDataFrame(train_file).rdd
 training_rdd = training_rdd \
     .map(first_two_column)
 
-training_rdd.take(5)
-
-
-model = ALS.trainImplicit( \
-    training_rdd,
-    rank=16,
-    iterations=10,
-    lambda_=0.1,
-    alpha=80.0
-)
-
 
 user_rdd = sqlContext.createDataFrame(user_file).rdd
-user_rdd.take(5)
+#user_rdd.take(5)
+
+# this takes a short while too
+# model = ALS.trainImplicit( \
+#     training_rdd,
+#     rank=16,
+#     iterations=10,
+#     lambda_=0.1,
+#     alpha=80.0
+# )
 
 # append user to training set and train again
 training_rdd = training_rdd.union(user_rdd.map(first_two_column))
@@ -117,35 +141,41 @@ model = ALS.trainImplicit( \
     alpha=80.0
 )
 
-predictions = model.predictAll(predict_input_rdd).sortBy(lambda row: -row.rating)
-
-# remove repos user already starred
-# this is top 10 recommendations for user
-res = predictions.map(lambda row: (row.product, row)) \
-    .subtractByKey(user_rdd.map(lambda row: (row[1], 0))) \
-    .map(lambda row: row[0]) \
-    .take(10)
+user_id_file = user_file[['uid']].drop_duplicates()
+#user_id_file.head()
+user_id_rdd = sqlContext.createDataFrame(user_id_file).rdd
+#user_id_rdd.take(10)
 
 
-#output
-for x in range(0, partition_num):
-    def filter(row):
-        return (row[0] % partition_num == x)
-    productFeatureShard = productFeatures.filter(filter)
-    np_features_shard = np.array(productFeatureShard.values().collect())
-    np_keys_shard = np.array(productFeatureShard.keys().collect())
-    np_la_norm_shard = np.array(list(map(LA.norm, np_features_shard)))
-    str_x = str(x)
-    productFeaturesFileName = 'productFeatures_'+str_x+".npy"
-    prod_feature_norm_FileName = 'prod_feature_norm_'+str_x+".npy"
-    repo_ids_FileName = 'repo_ids_'+str_x+".npy"
-    np.save(timeString+"/"+productFeaturesFileName, np_features_shard)
-    np.save(timeString+"/"+prod_feature_norm_FileName, list(np_la_norm_shard))
-    np.save(timeString+"/"+repo_ids_FileName, np_keys_shard)
-    s3.Bucket(OUTPUT_BUCKET_NAME).upload_file(timeString+"/"+productFeaturesFileName,timeString+"/"+productFeaturesFileName)
-    s3.Bucket(OUTPUT_BUCKET_NAME).upload_file(timeString+"/"+prod_feature_norm_FileName,timeString+"/"+prod_feature_norm_FileName)
-    s3.Bucket(OUTPUT_BUCKET_NAME).upload_file(timeString+"/"+repo_ids_FileName,timeString+"/"+repo_ids_FileName)
 
-config["body"]["shardNumber"] = partition_num
-config["body"]["bucketInfo"]["key"] = timeString
-collection.update({"config_name":"product_vector_config"},config,upsert=True)
+#--------------------------------------------
+#output to mongo database
+# from pymongo import MongoClient
+#mongodb://super:tKoJDjMtgcFPD_2Pfet@ds247587.mlab.com:47587/twinkeydow
+
+# try:
+#     conn = MongoClient("mongodb://super:tKoJDjMtgcFPD_2Pfet@ds247587.mlab.com:47587/twinkeydow")
+#     print("Connected successfully!!!")
+# except:
+#     print("Could not connect to MongoDB")
+
+# db = conn['twinkeydow']
+
+# Created or Switched to collection names: my_gfg_collection
+# collection = db['userbaserec']
+collection = db['user_recommend']
+
+recomend_num = 5
+num = user_id_rdd.count()
+for i in range(num):
+    #print(user_id_rdd.take(num)[i].uid)
+    uid = user_id_rdd.take(num)[i].uid
+    user_products = model.recommendProducts(uid, recomend_num)
+    rec_id = []
+    for obj in user_products:
+        rec_id.append(obj.product)
+    record = {
+        "_id": uid,
+        "rids": rec_id,
+    }
+    rec = collection.update_one({"_id": uid}, {"$set":record}, upsert=True)
