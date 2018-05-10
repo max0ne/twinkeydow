@@ -7,7 +7,6 @@ import * as urlParse from 'url-parse';
 
 import * as middleware from '../redux/middleware';
 import * as api from '../common/api';
-import env from '../env';
 
 import Home from './Home';
 import OAuth_callback from './OAuth_callback';
@@ -19,7 +18,6 @@ import {
   Switch,
   Route
 } from 'react-router-dom';
-import { toastError } from '../common/util';
 
 class App extends Component {
   
@@ -76,7 +74,7 @@ class App extends Component {
       <div className="app">
         <ToastContainer position='top-center' hideProgressBar={true} />
         <Navbar />
-        <Router ref={(router) => { this.history = router.history }} basename={env.basename}>
+        <Router ref={(router) => { this.history = router.history }} basename={process.env.REACT_APP_BASE_PATH}>
           <Switch>
             <Route path="/home" component={Home} />
             <Route path="/welcome" component={Welcome} />

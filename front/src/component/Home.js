@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Item, Rating, Popup, Header, Loader, Tab } from 'semantic-ui-react';
 
@@ -109,7 +108,7 @@ class Home extends Component {
         <Header as='h3' textAlign='center'>
           <p>You starred {this.state.userStars.length} repos, none of which are in our database.</p>
           <p>Checkout tomorrow for your personalized recommendations</p>
-          <p>Or <Link to="/">Go see some most post popular repos</Link></p>
+          <p>Or <a href="https://github.com/explore" target="_blank">Go see some most post popular repos</a></p>
         </Header>
       </div>
     );
