@@ -7,7 +7,6 @@ import * as urlParse from 'url-parse';
 
 import * as middleware from '../redux/middleware';
 import * as api from '../common/api';
-import * as util from '../common/util';
 
 import Home from './Home';
 import OAuth_callback from './OAuth_callback';

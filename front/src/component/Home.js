@@ -49,7 +49,7 @@ class Home extends Component {
   async reloadUserBasedRecommends() {
     try {
       this.setState({
-        userBasedRepos: await Promise.all((await api.getUserBasedRecommend()).rids.map(api.getRepoDetail)),
+        userBasedRepos: await Promise.all(((await api.getUserBasedRecommend()).rids || []).map(api.getRepoDetail)),
       });
     } catch (error) {
       util.toastError(error);
@@ -116,9 +116,8 @@ class Home extends Component {
           </Header.Content>
         </Header>
         <Header as='h3' textAlign='center'>
-          <p>You starred {this.state.userStars.length} repos, none of which are in our database.</p>
-          <p>Checkout tomorrow for your personalized recommendations</p>
-          <p>Or <a href="https://github.com/explore" target="_blank" rel="noopener noreferrer">Go see some most post popular repos</a></p>
+          <p>Sorry you don't have enough interactions on Github.</p>
+          <p><a href="https://github.com/explore" target="_blank" rel="noopener noreferrer">Go star some repos you like and come back later</a></p>
         </Header>
       </div>
     );
