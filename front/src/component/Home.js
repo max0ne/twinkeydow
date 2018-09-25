@@ -42,7 +42,7 @@ class Home extends Component {
       });
     });
 
-    this.listoSource.grow(10);
+    this.listoSource.grow(30);
     this.reloadUserBasedRecommends();
   }
 
