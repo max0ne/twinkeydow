@@ -19,15 +19,9 @@ export default class Welcome extends Component {
         <h1 className='welcome-logo'>
           <span role='img' aria-label='welcome'>🙋</span> hi welcome to project Twinkeydow
         </h1>
-        it gives you personalized Github repo recommendations
-        <b className='madeby'>made by</b>
-        <p>
-          {
-            _.map(madeBys, (({ href, name }) =>
-              <a key={name} className='madeby-name' href={href} target='_blank' rel='noopener noreferrer'>{name}</a>
-            ))
-          }
-        </p>
+        <h5>it gives you personalized Github repo recommendations</h5>
+        <br />
+        <br />
         <Button as="a" href={githubOAuthURL}><Icon name="github" />
           Try it!<br />
           Login through Github

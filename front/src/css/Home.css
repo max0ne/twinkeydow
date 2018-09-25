@@ -1,0 +1,30 @@
+.recommendation-content-container {
+  padding: 20px;
+}
+
+.repo-container:first-of-type {
+  margin-top: 0px;
+}
+
+.repo-container {
+  display: flex;
+  align-items: center;
+  flex-flow: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin: 20px 0px;
+}
+
+.home-repo-name {
+  word-break: break-all;
+}
+
+.repo-container * {
+  margin: 5px;
+}
+
+.home-repo-avatar {
+  width: 24px;
+  height: 24px;
+  margin-right: 5px;
+}

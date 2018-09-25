@@ -6,6 +6,10 @@
   height: 100vh;
 }
 
+.welcome-logo {
+  text-align: center;
+}
+
 .madeby {
   margin-top: 10px;
 }
