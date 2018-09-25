@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import languageMap from 'language-map';
 
 import {
   Grid,
+  Visibility,
   Responsive,
   Item,
   Image,
   Header,
   Loader,
+  Label,
   Card,
   Icon,
 } from 'semantic-ui-react';
@@ -27,23 +30,59 @@ class Home extends Component {
     this.state = {
       // list of user starred repo objects
       listos: [],
+      repoLangs: { },
       userBasedRepos: [],
       reachedEnd: false,
     }
 
     this.renderRecommendRepo = this.renderRecommendRepo.bind(this);
+    this.showMore = _.throttle(this.showMore, 1000);
   }
 
   async componentWillMount() {
+    this.firstRender = true;
     this.listoSource = new ListoSource(() => {
+      // show only 10 items so that not too much loading
+      // render some more items to cover entire screen
+      if (this.firstRender) {
+        this.firstRender = false;
+        // this.showMore();
+      }
+      const listos = this.listoSource.listos();
       this.setState({
-        listos: this.listoSource.listos(),
+        listos,
         reachedEnd: this.listoSource.reachedEnd,
       });
+      listos.forEach((r) => this.getRepoLanguages(this.listoSource.repoDetails[r.to_rid]));
     });
 
-    this.listoSource.grow(30);
-    this.reloadUserBasedRecommends();
+    this.showMore(10);
+  }
+
+  showMore = async (nn = 30) => {
+    console.log('show more');
+    if (!this.state.reachedEnd) {
+      this.listoSource.grow(nn);
+    } else {
+      // randomly choose some repo recommend on ui
+      const rids = this.listoSource.listos().map((li) => li.to_rid);
+      this.listoSource.showMoreOf(rids[Math.floor(Math.random() * rids.length)]);
+    }
+  }
+
+  getRepoLanguages = async (repo) => {
+    if (!_.has(this.state.repoLangs, repo.id)) {
+      const langs = await api.getRepoLanguages(`${repo.owner.login}/${repo.name}`);
+      console.log({ langs });
+      
+      this.setState((state) => ({
+        ...state,
+        repoLangs: {
+          ...state.repoLangs,
+          [repo.id]: langs,
+        },
+      }));
+    }
   }
 
   async reloadUserBasedRecommends() {
@@ -84,6 +123,11 @@ class Home extends Component {
   }
 
   renderRepo(repo, basedOnRepo, score=1) {
+    const langs = this.state.repoLangs[repo.id] || (repo.language ? { [repo.language]: 1 } : { });
+    const firstLangs = Object.keys(langs)
+      .filter((lang) => !_.isNil(lang))
+      .sort((a, b) => langs[a] - langs[b]).slice(0, 2);
+
     return (
       <div className='repo-container' key={repo.id}>
         <Card href={repo.html_url} target="_blank" rel="noopener noreferrer">
@@ -92,6 +136,11 @@ class Home extends Component {
               <Image className='home-repo-avatar' circular src={(repo.owner && repo.owner.avatar_url) || ''}></Image>
               {repo.full_name}
             </Card.Header>
+            {
+              firstLangs.map((lang) => (
+                <Label key={lang} style={{ background: (languageMap[lang] || {}).color, color: 'white' }}>{lang}</Label>
+              ))
+            }
             <Card.Description>{repo.description}</Card.Description>
           </Card.Content>
           {
@@ -161,6 +210,11 @@ class Home extends Component {
             ))
           }
         </Grid>
+        <Visibility offset={[10, 100]} onOnScreen={this.showMore} once={false} fireOnMount={true}>
+          <Card.Group>
+            <Card fluid color='orange' header='Load More' onClick={this.showMore} centered={true}/>
+          </Card.Group>
+        </Visibility>
       </Responsive>
     );
   }

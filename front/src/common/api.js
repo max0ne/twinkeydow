@@ -56,3 +56,7 @@ export async function getSimilar(rid, offset = 0, limit = 5) {
 export async function getRepoDetail(rid) {
   return (await ghClient.get(`repositories/${rid}`)).data;
 }
+
+export async function getRepoLanguages(repoIdentifier) {
+  return (await ghClient.get(`/repos/${repoIdentifier}/languages`)).data;
+}

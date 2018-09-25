@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
+    "language-map": "^1.3.0",
     "lodash": "^4.17.5",
     "react": "^16.3.1",
     "react-dom": "^16.3.1",
@@ -16,13 +17,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-
     "build-gh": "PUBLIC_URL=https://max0ne.github.io/twinkeydow/ react-scripts build",
     "deploy-gh": "npm run build-gh && gh-pages -d build",
-
     "build-s3": "PUBLIC_URL=https://twinkeydow.mingfei.me/ react-scripts build",
     "deploy-s3": "npm run build-s3 && aws s3 cp build s3://twinkeydow.mingfei.me/ --recursive --profile mingfei",
-    
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
