@@ -70,11 +70,10 @@ class App extends Component {
   }
 
   render() {
-    const basename = util.getBaseName();
     return (
       <div className="app">
         <ToastContainer position='top-center' hideProgressBar={true} />
-        <Router ref={(router) => { this.history = router.history }} basename={basename}>
+        <Router ref={(router) => { this.history = router.history }}>
           <Switch>
             <Route path="/home" component={Home} />
             <Route path="/welcome" component={Welcome} />

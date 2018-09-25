@@ -17,7 +17,8 @@
   "scripts": {
     "start": "react-scripts start",
 
-    "deploy-gh": "PUBLIC_URL=https://max0ne.github.io/twinkeydow/ gh-pages -d build",
+    "build-gh": "PUBLIC_URL=https://max0ne.github.io/twinkeydow/ react-scripts build",
+    "deploy-gh": "npm run build-gh && gh-pages -d build",
 
     "build-s3": "PUBLIC_URL=https://twinkeydow.mingfei.me/ react-scripts build",
     "deploy-s3": "npm run build-s3 && aws s3 cp build s3://twinkeydow.mingfei.me/ --recursive --profile mingfei",
