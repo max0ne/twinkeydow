@@ -1,18 +1,11 @@
 import React, { Component } from 'react';
 import { Button, Icon } from 'semantic-ui-react';
-import _ from 'lodash';
 
 import '../css/Welcome.css';
 import config from '../common/config';
 
 export default class Welcome extends Component {
   render() {
-    const madeBys = [
-      { href: '', name: 'Changxing' },
-      { href: '', name: 'Chenchen' },
-      { href: 'https://mingfei.me/', name: 'Mingfei' },
-      { href: '', name: 'Xinglun' },
-    ];
     const githubOAuthURL = `${config.oauthLoginURL}?oauth_done_redirect=${encodeURIComponent(window.location.href)}`;
     return (
       <div className='welcome-container'>

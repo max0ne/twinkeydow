@@ -7,8 +7,6 @@ import {
   Responsive,
   Item,
   Image,
-  Rating,
-  Popup,
   Header,
   Loader,
   Card,
