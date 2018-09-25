@@ -138,7 +138,11 @@ class Home extends Component {
             </Card.Header>
             {
               firstLangs.map((lang) => (
-                <Label key={lang} style={{ background: (languageMap[lang] || {}).color, color: 'white' }}>{lang}</Label>
+                <Label
+                  key={lang}
+                  style={{ background: (languageMap[lang] || {}).color, color: 'white' }}
+                  size='tiny'
+                  >{lang}</Label>
               ))
             }
             <Card.Description>{repo.description}</Card.Description>
@@ -212,7 +216,7 @@ class Home extends Component {
         </Grid>
         <Visibility offset={[10, 100]} onOnScreen={this.showMore} once={false} fireOnMount={true}>
           <Card.Group>
-            <Card fluid color='orange' header='Load More' onClick={this.showMore} centered={true}/>
+            <Card fluid color='orange' header='Load More' onClick={this.showMore} centered/>
           </Card.Group>
         </Visibility>
       </Responsive>
