@@ -127,7 +127,7 @@ class Home extends Component {
   }
 
   renderLoading() {
-    return <Loader />;
+    return <Loader active>Loading</Loader>;
   }
 
   render() {
