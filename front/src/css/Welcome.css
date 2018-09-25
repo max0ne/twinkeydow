@@ -1,2 +1,19 @@
 .welcome-container {
+  display: flex;
+  align-items: center;
+  flex-flow: column;
+  justify-content: center;
+  height: 100vh;
+}
+
+.welcome-logo {
+  text-align: center;
+}
+
+.madeby {
+  margin-top: 10px;
+}
+
+.madeby-name {
+  margin: 0px 5px;
 }

@@ -1,10 +1,24 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Item, Rating, Popup, Header, Loader, Tab } from 'semantic-ui-react';
+import _ from 'lodash';
+
+import {
+  Grid,
+  Responsive,
+  Item,
+  Image,
+  Header,
+  Loader,
+  Card,
+  Icon,
+} from 'semantic-ui-react';
+
+import '../css/Home.css';
 
 import * as util from '../common/util';
 import * as api from '../common/api';
 import { ListoSource } from '../model/listo';
+import Navbar from './Navbar';
 
 class Home extends Component {
 
@@ -71,30 +85,26 @@ class Home extends Component {
 
   renderRepo(repo, basedOnRepo, score=1) {
     return (
-      <Item key={repo.id}>
-        <Item.Image size='tiny' src={(repo.owner || {}).avatar_url} circular={true} />
-        <Item.Content>
+      <div className='repo-container' key={repo.id}>
+        <Card href={repo.html_url} target="_blank" rel="noopener noreferrer">
+          <Card.Content>
+            <Card.Header className='home-repo-name'>
+              <Image className='home-repo-avatar' circular src={(repo.owner && repo.owner.avatar_url) || ''}></Image>
+              {repo.full_name}
+            </Card.Header>
+            <Card.Description>{repo.description}</Card.Description>
+          </Card.Content>
           {
             basedOnRepo && (
-              <Item.Meta>
-                because you liked <a href={basedOnRepo.html_url} target="_blank">{basedOnRepo.full_name}</a>
-                <Popup position='right center' trigger={<Rating disabled={true} icon='star' rating={score * 5} maxRating={5} />}>
-                  <Popup.Content>
-                    {score * 5} / 5
-                </Popup.Content>
-                </Popup>
-              </Item.Meta>
+              <Card.Content extra>
+                <Icon name='heart' />
+                because you liked {basedOnRepo.full_name}
+              </Card.Content>
             )
           }
-          <Item.Header as='a' href={repo.html_url} target="_blank">{repo.full_name}</Item.Header>
-          <Item.Meta>{repo.description}</Item.Meta>
-          <Item.Extra>{(repo.topics || []).join(' ')}</Item.Extra>
-          <Item.Extra as='a' onClick={() => this.listoSource.showMoreOf(repo.id)} target="_blank">
-            show me more like this
-          </Item.Extra>
-        </Item.Content>
-      </Item>
-    );
+        </Card>
+      </div>
+    )
   }
 
   renderNoRecommendAvailable() {
@@ -108,23 +118,29 @@ class Home extends Component {
         <Header as='h3' textAlign='center'>
           <p>You starred {this.state.userStars.length} repos, none of which are in our database.</p>
           <p>Checkout tomorrow for your personalized recommendations</p>
-          <p>Or <a href="https://github.com/explore" target="_blank">Go see some most post popular repos</a></p>
+          <p>Or <a href="https://github.com/explore" target="_blank" rel="noopener noreferrer">Go see some most post popular repos</a></p>
         </Header>
       </div>
     );
   }
 
   renderLoading() {
-    return <Loader />;
+    return <Loader active>Loading</Loader>;
   }
 
   render() {
-    const panes = [
-      { menuItem: 'Item Based', render: () => this.renderItemBased() },
-      { menuItem: 'User Based', render: () => this.renderUserBased() },
-    ];
+    // const panes = [
+    //   { menuItem: 'Item Based', render: () => this.renderItemBased() },
+    //   { menuItem: 'User Based', render: () => this.renderUserBased() },
+    // ];
     return (
-      <Tab menu={{ secondary: true }} panes={panes} />
+      <React.Fragment>
+        <Navbar />
+        {/* <Tab menu={{ secondary: true }} panes={panes} /> */}
+        <div className='recommendation-content-container'>
+          {this.renderItemBased()}
+        </div>
+      </React.Fragment>
     );
   }
 
@@ -134,12 +150,19 @@ class Home extends Component {
         this.renderNoRecommendAvailable() :
         this.renderLoading();
     }
+    const colcnt = Math.max(Math.ceil(document.body.clientWidth / 400), 1);
     return (
-      <Item.Group>
-        {
-          this.state.listos.map(this.renderRecommendRepo)
-        }
-      </Item.Group>
+      <Responsive onUpdate={() => this.forceUpdate()}>
+        <Grid columns={colcnt} centered>
+          {
+            _.range(colcnt).map((col) => (
+              <Grid.Column key={col}>
+                {this.state.listos.filter((_, idx) => idx % colcnt === col).map(this.renderRecommendRepo)}
+              </Grid.Column>
+            ))
+          }
+        </Grid>
+      </Responsive>
     );
   }
 

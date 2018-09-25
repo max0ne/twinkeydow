@@ -7,11 +7,11 @@ import * as urlParse from 'url-parse';
 
 import * as middleware from '../redux/middleware';
 import * as api from '../common/api';
+import * as util from '../common/util';
 
 import Home from './Home';
 import OAuth_callback from './OAuth_callback';
 import Welcome from './Welcome';
-import Navbar from './Navbar';
  
 import {
   HashRouter as Router,
@@ -73,8 +73,7 @@ class App extends Component {
     return (
       <div className="app">
         <ToastContainer position='top-center' hideProgressBar={true} />
-        <Navbar />
-        <Router ref={(router) => { this.history = router.history }} basename={process.env.REACT_APP_BASE_PATH}>
+        <Router ref={(router) => { this.history = router.history }}>
           <Switch>
             <Route path="/home" component={Home} />
             <Route path="/welcome" component={Welcome} />
