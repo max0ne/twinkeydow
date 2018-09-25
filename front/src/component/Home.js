@@ -126,7 +126,7 @@ class Home extends Component {
     const langs = this.state.repoLangs[repo.id] || (repo.language ? { [repo.language]: 1 } : { });
     const firstLangs = Object.keys(langs)
       .filter((lang) => !_.isNil(lang))
-      .sort((a, b) => langs[a] - langs[b]).slice(0, 2);
+      .sort((a, b) => langs[b] - langs[a]).slice(0, 2);
 
     return (
       <div className='repo-container' key={repo.id}>
