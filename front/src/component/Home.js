@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Item, Rating, Popup, Header, Loader, Tab } from 'semantic-ui-react';
+import { Item, Rating, Popup, Header, Loader } from 'semantic-ui-react';
 
 import * as util from '../common/util';
 import * as api from '../common/api';
 import { ListoSource } from '../model/listo';
+import Navbar from './Navbar';
 
 class Home extends Component {
 
@@ -108,7 +109,7 @@ class Home extends Component {
         <Header as='h3' textAlign='center'>
           <p>You starred {this.state.userStars.length} repos, none of which are in our database.</p>
           <p>Checkout tomorrow for your personalized recommendations</p>
-          <p>Or <a href="https://github.com/explore" target="_blank">Go see some most post popular repos</a></p>
+          <p>Or <a href="https://github.com/explore" target="_blank" rel="noopener noreferrer">Go see some most post popular repos</a></p>
         </Header>
       </div>
     );
@@ -119,12 +120,16 @@ class Home extends Component {
   }
 
   render() {
-    const panes = [
-      { menuItem: 'Item Based', render: () => this.renderItemBased() },
-      { menuItem: 'User Based', render: () => this.renderUserBased() },
-    ];
+    // const panes = [
+    //   { menuItem: 'Item Based', render: () => this.renderItemBased() },
+    //   { menuItem: 'User Based', render: () => this.renderUserBased() },
+    // ];
     return (
-      <Tab menu={{ secondary: true }} panes={panes} />
+      <React.Fragment>
+        <Navbar />
+        {/* <Tab menu={{ secondary: true }} panes={panes} /> */}
+        {this.renderItemBased()}
+      </React.Fragment>
     );
   }
 
