@@ -2,7 +2,6 @@
   "name": "twifront",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://max0ne.github.io/twinkeydow/",
   "dependencies": {
     "axios": "^0.18.0",
     "lodash": "^4.17.5",
@@ -17,10 +16,14 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+
+    "deploy-gh": "PUBLIC_URL=https://max0ne.github.io/twinkeydow/ gh-pages -d build",
+
+    "build-s3": "PUBLIC_URL=https://twinkeydow.mingfei.me/ react-scripts build",
+    "deploy-s3": "npm run build-s3 && aws s3 cp build s3://twinkeydow.mingfei.me/ --recursive --profile mingfei",
+    
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "deploy": "gh-pages -d build"
+    "eject": "react-scripts eject"
   },
   "devDependencies": {
     "gh-pages": "^1.1.0"

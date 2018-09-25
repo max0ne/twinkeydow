@@ -7,3 +7,5 @@ export function toastError(err) {
 export function toast(...params) {
   _toast(...params);
 }
+
+export const getBaseName = () => urlParse(process.env.PUBLIC_URL).pathname;

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Image, Menu, Popup } from 'semantic-ui-react';
+import * as util from '../common/util';
 
 class Navbar extends Component {
 
@@ -49,7 +50,7 @@ class Navbar extends Component {
     return (
       <div>
         <Menu pointing secondary>
-          <Menu.Item name='Twinkeydow' as='a' href={process.env.REACT_APP_BASE_PATH} />
+          <Menu.Item name='Twinkeydow' as='a' href={util.getBaseName()} />
           <Menu.Menu position='right'>
             {
               this.props.user ? this.renderLoggedIn() : this.renderNotLogIn()

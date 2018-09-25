@@ -7,6 +7,7 @@ import * as urlParse from 'url-parse';
 
 import * as middleware from '../redux/middleware';
 import * as api from '../common/api';
+import * as util from '../common/util';
 
 import Home from './Home';
 import OAuth_callback from './OAuth_callback';
@@ -69,10 +70,11 @@ class App extends Component {
   }
 
   render() {
+    const basename = util.getBaseName();
     return (
       <div className="app">
         <ToastContainer position='top-center' hideProgressBar={true} />
-        <Router ref={(router) => { this.history = router.history }} basename={process.env.REACT_APP_BASE_PATH}>
+        <Router ref={(router) => { this.history = router.history }} basename={basename}>
           <Switch>
             <Route path="/home" component={Home} />
             <Route path="/welcome" component={Welcome} />
