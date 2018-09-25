@@ -22,7 +22,7 @@
 
     "build-s3": "PUBLIC_URL=https://twinkeydow.mingfei.me/ react-scripts build",
     "deploy-s3": "npm run build-s3 && aws s3 cp build s3://twinkeydow.mingfei.me/ --recursive --profile mingfei",
-    
+
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },

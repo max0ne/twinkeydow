@@ -4,6 +4,7 @@ import _ from 'lodash';
 
 import {
   Grid,
+  Visibility,
   Responsive,
   Item,
   Image,
@@ -32,18 +33,36 @@ class Home extends Component {
     }
 
     this.renderRecommendRepo = this.renderRecommendRepo.bind(this);
+    this.showMore = _.throttle(this.showMore, 1000);
   }
 
   async componentWillMount() {
+    this.firstRender = true;
     this.listoSource = new ListoSource(() => {
+      // show only 10 items so that not too much loading
+      // render some more items to cover entire screen
+      if (this.firstRender) {
+        this.firstRender = false;
+        this.showMore();
+      }
       this.setState({
         listos: this.listoSource.listos(),
         reachedEnd: this.listoSource.reachedEnd,
       });
     });
 
-    this.listoSource.grow(10);
-    this.reloadUserBasedRecommends();
+    this.showMore(10);
+  }
+
+  showMore = async (nn = 30) => {
+    console.log('show more');
+    if (!this.state.reachedEnd) {
+      this.listoSource.grow(nn);
+    } else {
+      // randomly choose some repo recommend on ui
+      const rids = this.listoSource.listos().map((li) => li.to_rid);
+      this.listoSource.showMoreOf(rids[Math.floor(Math.random() * rids.length)]);
+    }
   }
 
   async reloadUserBasedRecommends() {
@@ -161,6 +180,11 @@ class Home extends Component {
             ))
           }
         </Grid>
+        <Visibility offset={[10, 100]} onOnScreen={this.showMore} once={false} fireOnMount={true}>
+          <Card.Group>
+            <Card fluid color='orange' header='Load More' onClick={this.showMore} centered={true}/>
+          </Card.Group>
+        </Visibility>
       </Responsive>
     );
   }

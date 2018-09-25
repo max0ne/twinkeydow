@@ -3,9 +3,9 @@ import _ from 'lodash';
 
 class StarSource {
   constructor() {
-    this._growing = false;
     this._pool = [ ];
     this._nextPageURL = undefined;
+    this.reachedEnd = false;
   }
 
   /**
@@ -14,12 +14,17 @@ class StarSource {
    * @returns {[object]}
    */
   async pop(nn) {
+    if (this.reachedEnd) {
+      return [];
+    }
+
     // try to get from in memory pool
     if (this._pool.length >= nn) {
       return this._pool.splice(0, nn);
     }
     // load next page
     const { data, nextStarPageURL } = await api.getUserStars(this._nextPageURL);
+    this.reachedEnd = this._nextPageURL === nextStarPageURL;
     this._nextPageURL = nextStarPageURL;
     this._pool.push(...data);
     return this._pool.splice(0, nn);
@@ -74,7 +79,11 @@ export class ListoSource {
     // populate repo detail
     await Promise.all(nonDuplicateRecs.map(async (rec) => {
       // finally push processed rec object to result pool
-      this.repoDetails[rec.to_rid] = await api.getRepoDetail(rec.to_rid);
+      const repoDetail = await api.getRepoDetail(rec.to_rid).catch(() => undefined);
+      if (!repoDetail) {
+        return;
+      }
+      this.repoDetails[rec.to_rid] = repoDetail;
       this._listos.push(rec);
     }));
     this.onUpdate();
@@ -101,16 +110,7 @@ export class ListoSource {
     })));
   }
 
-  /**
-   * @param {number} nn 
-   * @param {function} then 
-   */
-  async grow(nn) {
-    if (this._growing || this.reachedEnd) {
-      return;
-    }
-    this._growing = true;
-
+  _grow = async (nn) => {
     // 1. pop from local pool
     const recs = this._recommendoPool.splice(0, nn);
     if (recs.length === nn) {
@@ -139,7 +139,22 @@ export class ListoSource {
       }));
       await this._populateListo(this._recommendoPool.splice(0, nn));
     }
+  }
 
+  /**
+   * @param {number} nn 
+   * @param {function} then 
+   */
+  async grow(nn) {
+    if (this._growing || this.reachedEnd) {
+      return;
+    }
+    this._growing = true;
+    try {
+      await this._grow(nn);
+    } catch (err) {
+      console.error(err);
+    }
     this._growing = false;
   }
 }
