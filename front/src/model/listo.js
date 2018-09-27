@@ -90,6 +90,21 @@ export class ListoSource {
   }
 
   async showMoreOf(rid) {
+    if (this.busy) {
+      return;
+    }
+    this.busy = true;
+    this.onUpdate();
+    try {
+      await this._showMoreOf(rid);
+    } catch (err) {
+      console.error(err);
+    }
+    this.busy = false;
+    this.onUpdate();
+  }
+
+  async _showMoreOf(rid) {
     const moreFromListPool = this._recommendoPool.filter((rec) => rec.from_rid === rid);
     if (moreFromListPool.length > 0) {
       this._listos = _.flatmap(this._listos, (listo) => {
@@ -146,15 +161,17 @@ export class ListoSource {
    * @param {function} then 
    */
   async grow(nn) {
-    if (this._growing || this.reachedEnd) {
+    if (this.busy || this.reachedEnd) {
       return;
     }
-    this._growing = true;
+    this.busy = true;
+    this.onUpdate();
     try {
       await this._grow(nn);
     } catch (err) {
       console.error(err);
     }
-    this._growing = false;
+    this.busy = false;
+    this.onUpdate();
   }
 }

@@ -65,8 +65,10 @@ class Home extends Component {
       this.listoSource.grow(nn);
     } else {
       // randomly choose some repo recommend on ui
-      const rids = this.listoSource.listos().map((li) => li.to_rid);
-      this.listoSource.showMoreOf(rids[Math.floor(Math.random() * rids.length)]);
+      const rids = _.uniq(this.listoSource.listos().map((li) => li.to_rid));
+      _.range(5).forEach(() => 
+        this.listoSource.showMoreOf(rids[Math.floor(Math.random() * rids.length)])
+      );
     }
   }
 
@@ -151,7 +153,7 @@ class Home extends Component {
             basedOnRepo && (
               <Card.Content extra>
                 <Icon name='heart' />
-                because you liked {basedOnRepo.full_name}
+                similar to {basedOnRepo.full_name}
               </Card.Content>
             )
           }
@@ -216,7 +218,11 @@ class Home extends Component {
         </Grid>
         <Visibility offset={[10, 100]} onOnScreen={this.showMore} once={false} fireOnMount={true}>
           <Card.Group>
-            <Card fluid color='orange' header='Load More' onClick={this.showMore} centered/>
+            <Card fluid color='orange' style={{height: 50}} onClick={this.showMore} centered>
+              {
+                this.listoSource.busy ? <Loader active={true} /> : <Card.Content>Load More</Card.Content>
+              }
+            </Card>
           </Card.Group>
         </Visibility>
       </Responsive>
