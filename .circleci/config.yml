@@ -1,0 +1,38 @@
+version: 2
+jobs:
+  build-deploy-dev:
+    docker:
+      - image: max0ne/circleci-node-aws:latest
+    steps:
+      - checkout
+      - run: cd front && npm i
+      - run: cd front && npm run build-dev
+      - run: cd front && aws s3 cp build s3://twinkeydow-dev.mingfei.me/ --recursive
+
+  build-deploy-prod:
+    docker:
+      - image: max0ne/circleci-node-aws:latest
+    steps:
+      - checkout
+      - run: cd front && npm i
+      - run: cd front && npm run build-s3
+      - run:
+          name: Deploy to S3
+          command: cd front && aws s3 cp build s3://twinkeydow.mingfei.me/ --recursive
+      - run: cd front && npm run build-gh
+      - run:
+          name: Deploy to Github Pages
+          command: cd front && npm run deploy-gh
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build-deploy-dev:
+          filters:
+            branches:
+              only: dev
+      - build-deploy-prod:
+          filters:
+            branches:
+              only: master
