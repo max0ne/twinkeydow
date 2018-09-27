@@ -1,7 +1,7 @@
 version: 2
 jobs:
   prepare:
-    working_directory: ~/front
+    working_directory: ~/project/front
     docker:
       - image: circleci/node:latest
     steps:
@@ -17,7 +17,7 @@ jobs:
             - node_modules
 
   build:
-    working_directory: ~/front
+    working_directory: ~/project/front
     docker:
       - image: circleci/node:latest
     steps:
