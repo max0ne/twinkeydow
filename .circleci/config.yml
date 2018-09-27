@@ -1,46 +1,40 @@
 version: 2
 jobs:
-  build:
-    working_directory: ~/project
+  build-deploy-dev:
     docker:
       - image: max0ne/circleci-node-aws:latest
     steps:
       - checkout
-      - restore_cache:
-          name: Restore node modules cache
-          key: front_node_modules-{{ checksum "front/package-lock.json" }}
       - run: cd front && npm i
-      - save_cache:
-          name: Save node modules cache
-          key: front_node_modules-{{ checksum "front/package-lock.json" }}
-          paths:
-            - front/node_modules
       - run: cd front && npm run build-dev
-      - save_cache:
-          key: front-build-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
-          paths:
-              - front/build
+      - run: aws s3 cp front/build s3://twinkeydow-dev.mingfei.me/ --recursive
 
-  deploy:
-    working_directory: ~/project
+  build-deploy-prod:
     docker:
       - image: max0ne/circleci-node-aws:latest
     steps:
-      - restore_cache:
-          name: Restore build files
-          key: front-build-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      - checkout
+      - run: cd front && npm i
+      - run: cd front && npm run build-s3
       - run:
           name: Deploy to S3
-          command: aws s3 cp front/build s3://twinkeydow-dev.mingfei.me/ --recursive
+          command: cd front && aws s3 cp front/build s3://twinkeydow.mingfei.me/ --recursive
+      - run: cd front && npm run build-gh
+      - run:
+          name: Deploy to Github Pages
+          command: cd front && npm run deploy-gh
 
 workflows:
   version: 2
   build-deploy:
     jobs:
-      - build
-      - deploy:
+      - build-deploy-dev:
+          filters:
+            branches:
+              only: dev
+      - build-deploy-prod:
           requires:
-            - build
+            - build-prod
           filters:
             branches:
               only: master
