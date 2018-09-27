@@ -20,6 +20,7 @@ jobs:
     docker:
       - image: circleci/python:2.7-jessie
     steps:
+      - run: find .
       - run:
           name: Install awscli
           command: sudo pip install awscli
