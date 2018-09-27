@@ -20,9 +20,11 @@ jobs:
           name: Deploy to S3
           command: cd front && aws s3 cp build s3://twinkeydow.mingfei.me/ --recursive
       - run: cd front && npm run build-gh
+      - run: git config --global user.email "max0ne"
+      - run: git config --global user.name "max0ne"
       - run:
           name: Deploy to Github Pages
-          command: cd front && npm run deploy-gh
+          command: cd front && npm run push-gh
 
 workflows:
   version: 2
