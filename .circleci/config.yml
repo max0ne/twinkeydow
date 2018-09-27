@@ -33,8 +33,6 @@ workflows:
             branches:
               only: dev
       - build-deploy-prod:
-          requires:
-            - build-prod
           filters:
             branches:
               only: master
