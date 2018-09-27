@@ -1,6 +1,7 @@
 version: 2
 jobs:
   build:
+    working_directory: ~/project
     docker:
       - image: max0ne/circleci-node-aws:latest
     steps:
@@ -15,6 +16,12 @@ jobs:
           paths:
             - front/node_modules
       - run: cd front && npm run build-dev
+
+  deploy:
+    working_directory: ~/project
+    docker:
+      - image: max0ne/circleci-node-aws:latest
+    steps:
       - run:
           name: Deploy to S3
           command: aws s3 cp front/build s3://twinkeydow-dev.mingfei.me/ --recursive
