@@ -1,0 +1,17 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      # check out the code in the project directory
+      - checkout
+
+      # install deplendencies
+      - run:
+        name: install deplendencies
+        command: 'cd front && npm i'
+
+      - run:
+        name: build dev
+        command: 'cd front && npm run build-dev'
