@@ -1,18 +1,17 @@
 version: 2
 jobs:
   build:
-    working_directory: front
     docker:
       - image: circleci/node:latest
     steps:
       - checkout
       - restore_cache:
           name: Restore node modules cache
-          key: front_node_modules-{{ checksum "package-lock.json" }}
-      - run: npm i
+          key: front_node_modules-{{ checksum "front/package-lock.json" }}
+      - run: cd front && npm i
       - save_cache:
           name: Save node modules cache
-          key: front_node_modules-{{ checksum "package-lock.json" }}
+          key: front_node_modules-{{ checksum "front/package-lock.json" }}
           paths:
-            - node_modules
-      - run: npm run build-dev
+            - front/node_modules
+      - run: cd front && npm run build-dev
