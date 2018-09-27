@@ -16,12 +16,19 @@ jobs:
           paths:
             - front/node_modules
       - run: cd front && npm run build-dev
+      - save_cache:
+          key: front-build-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+              - front/build
 
   deploy:
     working_directory: ~/project
     docker:
       - image: max0ne/circleci-node-aws:latest
     steps:
+      - restore_cache:
+          name: Restore build files
+          key: front-build-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           name: Deploy to S3
           command: aws s3 cp front/build s3://twinkeydow-dev.mingfei.me/ --recursive
