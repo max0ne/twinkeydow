@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  prepare:
+  build:
     working_directory: front
     docker:
       - image: circleci/node:latest
@@ -15,10 +15,4 @@ jobs:
           key: front_node_modules-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
-
-  build:
-    working_directory: front
-    docker:
-      - image: circleci/node:latest
-    steps:
       - run: npm run build-dev
