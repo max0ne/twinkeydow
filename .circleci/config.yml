@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run: cd front && npm i
       - run: cd front && npm run build-dev
-      - run: aws s3 cp build s3://twinkeydow-dev.mingfei.me/ --recursive
+      - run: cd front && aws s3 cp build s3://twinkeydow-dev.mingfei.me/ --recursive
 
   build-deploy-prod:
     docker:
