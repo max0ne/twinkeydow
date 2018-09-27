@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:latest
+      - image: max0ne/circleci-node-aws:latest
     steps:
       - checkout
       - restore_cache:
@@ -15,15 +15,6 @@ jobs:
           paths:
             - front/node_modules
       - run: cd front && npm run build-dev
-
-  deploy:
-    docker:
-      - image: circleci/python:2.7-jessie
-    steps:
-      - run: find .
-      - run:
-          name: Install awscli
-          command: sudo pip install awscli
       - run:
           name: Deploy to S3
           command: aws s3 cp front/build s3://twinkeydow-dev.mingfei.me/ --recursive
