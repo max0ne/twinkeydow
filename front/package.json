@@ -10,18 +10,19 @@
     "react-dom": "^16.3.1",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "1.1.4",
+    "react-scripts": "^2.0.0",
     "react-toastify": "^4.3.2",
     "redux": "^3.7.2",
     "semantic-ui-css": "^2.3.1",
-    "semantic-ui-react": "^0.79.1"
+    "semantic-ui-react": "^0.79.1",
+    "url-parse": "^1.4.3"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build-dev": "PUBLIC_URL=https://twinkeydow-dev.mingfei.me/ react-scripts build",
+    "build-dev": "PUBLIC_URL=https://dev-twinkeydow.mingfei.me/ react-scripts build",
     "build-s3": "PUBLIC_URL=https://twinkeydow.mingfei.me/ react-scripts build",
     "build-gh": "PUBLIC_URL=https://max0ne.github.io/twinkeydow/ react-scripts build",
-    "push-dev": "aws s3 cp build s3://twinkeydow-dev.mingfei.me/ --recursive --profile mingfei",
+    "push-dev": "aws s3 cp build s3://dev-twinkeydow.mingfei.me/ --recursive --profile mingfei",
     "push-s3": "aws s3 cp build s3://twinkeydow.mingfei.me/ --recursive --profile mingfei",
     "push-gh": "gh-pages -d build",
     "deploy-dev": "npm run build-dev && npm run push-dev",
@@ -31,6 +32,12 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "gh-pages": "^1.1.0"
-  }
+    "gh-pages": "^2.0.0"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

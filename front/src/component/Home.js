@@ -35,11 +35,8 @@ class Home extends Component {
       reachedEnd: false,
     }
 
-    this.renderRecommendRepo = this.renderRecommendRepo.bind(this);
     this.showMore = _.throttle(this.showMore, 1000);
-  }
 
-  async componentWillMount() {
     this.firstRender = true;
     this.listoSource = new ListoSource(() => {
       // show only 10 items so that not too much loading
@@ -75,7 +72,6 @@ class Home extends Component {
   getRepoLanguages = async (repo) => {
     if (!_.has(this.state.repoLangs, repo.id)) {
       const langs = await api.getRepoLanguages(`${repo.owner.login}/${repo.name}`);
-      console.log({ langs });
       
       this.setState((state) => ({
         ...state,
@@ -119,7 +115,7 @@ class Home extends Component {
    * @param {string} rec.score
    * @param {string} rec.reason 'star' || 'show_more'
    */
-  renderRecommendRepo(rec) {
+  renderRecommendRepo = (rec) => {
     const repoDetail = this.listoSource.repoDetails;
     return this.renderRepo(repoDetail[rec.to_rid], repoDetail[rec.from_rid], rec.score);
   }

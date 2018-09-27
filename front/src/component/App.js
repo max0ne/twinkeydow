@@ -11,7 +11,7 @@ import * as api from '../common/api';
 import Home from './Home';
 import OAuth_callback from './OAuth_callback';
 import Welcome from './Welcome';
- 
+
 import {
   HashRouter as Router,
   Switch,
@@ -19,8 +19,12 @@ import {
 } from 'react-router-dom';
 
 class App extends Component {
-  
-  async componentWillMount() {
+  constructor(props) {
+    super(props);
+    this.redirectIfNecessary();
+  }
+
+  redirectIfNecessary = async () => {
     const gotoWelcome = () => {
       if (!this.history) {
         return setTimeout(gotoWelcome, 100);
@@ -39,7 +43,7 @@ class App extends Component {
     };
 
     try {
-      const access_token = 
+      const access_token =
         urlParse(window.location.href, true).query.access_token ||
         urlParse(window.location.href.split('#')[1], true).query.access_token ||
         middleware.loadGithubTokenFromLocalStorage();
