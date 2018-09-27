@@ -19,10 +19,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build-dev": "PUBLIC_URL=https://dev.twinkeydow.mingfei.me/ react-scripts build",
+    "build-dev": "PUBLIC_URL=https://dev-twinkeydow.mingfei.me/ react-scripts build",
     "build-s3": "PUBLIC_URL=https://twinkeydow.mingfei.me/ react-scripts build",
     "build-gh": "PUBLIC_URL=https://max0ne.github.io/twinkeydow/ react-scripts build",
-    "push-dev": "aws s3 cp build s3://dev.twinkeydow.mingfei.me/ --recursive --profile mingfei",
+    "push-dev": "aws s3 cp build s3://dev-twinkeydow.mingfei.me/ --recursive --profile mingfei",
     "push-s3": "aws s3 cp build s3://twinkeydow.mingfei.me/ --recursive --profile mingfei",
     "push-gh": "gh-pages -d build",
     "deploy-dev": "npm run build-dev && npm run push-dev",
