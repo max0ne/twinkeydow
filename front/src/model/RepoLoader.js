@@ -90,7 +90,8 @@ export default class RepoLoader extends React.Component {
       // if no more source to read from
       // start reading similar repos of given repos on ui
       // randomly pick 5 previously used repos
-      sourceRepoIDs = _.map(_.range(5).map(() => this.sourceLoader.getRandom()), 'id');
+      const from_rids = [...new Set(_.map(this.state.recommends, 'from_rid'))];
+      sourceRepoIDs = _.range(5).map(() => from_rids[_.random(from_rids.length - 1)]);
     }
 
     // load similars for each of these source repo ids

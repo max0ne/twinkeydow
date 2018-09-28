@@ -1,5 +1,4 @@
 import * as api from '../common/api';
-import _ from 'lodash';
 
 export default class RepoSourceLoader {
   constructor() {
@@ -28,9 +27,5 @@ export default class RepoSourceLoader {
     this._nextPageURL = nextStarPageURL;
     this._pool.push(...data);
     return this._pool.splice(0, nn);
-  }
-
-  getRandom = () => {
-    return this._pool[_.random(this._pool.length - 1)];
   }
 }
