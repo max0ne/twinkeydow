@@ -7,7 +7,6 @@ import {
   Grid,
   Visibility,
   Responsive,
-  Item,
   Image,
   Header,
   Loader,
@@ -15,12 +14,12 @@ import {
   Card,
   Icon,
 } from 'semantic-ui-react';
+import { Facebook as ContentLoader } from 'react-content-loader';
 
 import '../css/Home.css';
 
-import * as util from '../common/util';
+import RepoLoader from '../model/RepoLoader';
 import * as api from '../common/api';
-import { ListoSource } from '../model/listo';
 import Navbar from './Navbar';
 
 class Home extends Component {
@@ -28,44 +27,7 @@ class Home extends Component {
   constructor() {
     super();
     this.state = {
-      // list of user starred repo objects
-      listos: [],
       repoLangs: { },
-      userBasedRepos: [],
-      reachedEnd: false,
-    }
-
-    this.showMore = _.throttle(this.showMore, 1000);
-
-    this.firstRender = true;
-    this.listoSource = new ListoSource(() => {
-      // show only 10 items so that not too much loading
-      // render some more items to cover entire screen
-      if (this.firstRender) {
-        this.firstRender = false;
-        // this.showMore();
-      }
-      const listos = this.listoSource.listos();
-      this.setState({
-        listos,
-        reachedEnd: this.listoSource.reachedEnd,
-      });
-      listos.forEach((r) => this.getRepoLanguages(this.listoSource.repoDetails[r.to_rid]));
-    });
-
-    this.showMore(10);
-  }
-
-  showMore = async (nn = 30) => {
-    console.log('show more');
-    if (!this.state.reachedEnd) {
-      this.listoSource.grow(nn);
-    } else {
-      // randomly choose some repo recommend on ui
-      const rids = _.uniq(this.listoSource.listos().map((li) => li.to_rid));
-      _.range(5).forEach(() => 
-        this.listoSource.showMoreOf(rids[Math.floor(Math.random() * rids.length)])
-      );
     }
   }
 
@@ -83,44 +45,21 @@ class Home extends Component {
     }
   }
 
-  async reloadUserBasedRecommends() {
-    try {
-      this.setState({
-        userBasedRepos: await Promise.all(((await api.getUserBasedRecommend()).rids || []).map(api.getRepoDetail)),
-      });
-    } catch (error) {
-      util.toastError(error);
+  renderRepo(idx, repo, basedOnRepo) {
+    if (_.isNil(repo)) {
+      return (
+        <div className='repo-container' key={idx}>
+          <Card>
+            <ContentLoader />
+            <Card.Content extra>
+              <Icon name='sync' />
+              It's loading...
+            </Card.Content>
+          </Card>
+        </div>
+      );
     }
-  }
 
-  renderUserStar(repo) {
-    return (
-      <Item key={repo.id}>
-        <Item.Image size='tiny' src={(repo.owner || {}).avatar_url} circular={true} />
-        <Item.Content>
-          <Item.Header as='a' href={repo.html_url}>{repo.full_name}</Item.Header>
-          <Item.Meta>{`${repo.owner.login}/${repo.description}`}</Item.Meta>
-          <Item.Extra>{(repo.topics || []).join(' ')}</Item.Extra>
-        </Item.Content>
-      </Item>
-    );
-  }
-
-  /**
-   * { basedOn: rid, score: number, rid: string }
-   * 
-   * @param {object} rec
-   * @param {string} rec.from_rid
-   * @param {number} rec.to_rid
-   * @param {string} rec.score
-   * @param {string} rec.reason 'star' || 'show_more'
-   */
-  renderRecommendRepo = (rec) => {
-    const repoDetail = this.listoSource.repoDetails;
-    return this.renderRepo(repoDetail[rec.to_rid], repoDetail[rec.from_rid], rec.score);
-  }
-
-  renderRepo(repo, basedOnRepo, score=1) {
     const langs = this.state.repoLangs[repo.id] || (repo.language ? { [repo.language]: 1 } : { });
     const firstLangs = Object.keys(langs)
       .filter((lang) => !_.isNil(lang))
@@ -179,14 +118,9 @@ class Home extends Component {
   }
 
   render() {
-    // const panes = [
-    //   { menuItem: 'Item Based', render: () => this.renderItemBased() },
-    //   { menuItem: 'User Based', render: () => this.renderUserBased() },
-    // ];
     return (
       <React.Fragment>
         <Navbar />
-        {/* <Tab menu={{ secondary: true }} panes={panes} /> */}
         <div className='recommendation-content-container'>
           {this.renderItemBased()}
         </div>
@@ -194,29 +128,29 @@ class Home extends Component {
     );
   }
 
-  renderItemBased() {
-    if (this.state.listos.length === 0) {
-      return this.state.reachedEnd ?
-        this.renderNoRecommendAvailable() :
-        this.renderLoading();
+  renderItemBasedWithData = ({ loadMore, repoDetails, recommends, loading }) => {
+    if (recommends.length === 0) {
+      return loading ? this.renderLoading() : this.renderNoRecommendAvailable();
     }
     const colcnt = Math.max(Math.ceil(document.body.clientWidth / 400), 1);
+    // load 3 more rows very time
+    loadMore = loadMore.bind(colcnt * 3);
     return (
       <Responsive onUpdate={() => this.forceUpdate()}>
-        <Grid columns={colcnt} centered>
-          {
+        <Grid columns={colcnt} centered>{
             _.range(colcnt).map((col) => (
-              <Grid.Column key={col}>
-                {this.state.listos.filter((_, idx) => idx % colcnt === col).map(this.renderRecommendRepo)}
-              </Grid.Column>
+              <Grid.Column key={col}>{
+                recommends
+                  .filter((_, idx) => idx % colcnt === col)
+                  .map((rec, idx) => this.renderRepo(idx, repoDetails[rec.to_rid], repoDetails[rec.from_rid]))
+              }</Grid.Column>
             ))
-          }
-        </Grid>
-        <Visibility offset={[10, 100]} onOnScreen={this.showMore} once={false} fireOnMount={true}>
+        }</Grid>
+        <Visibility offset={[10, 100]} onOnScreen={loadMore} once={false} fireOnMount={true}>
           <Card.Group>
-            <Card fluid color='orange' style={{height: 50}} onClick={this.showMore} centered>
+            <Card color='orange' style={{ height: 50 }} onClick={loadMore} centered>
               {
-                this.listoSource.busy ? <Loader active={true} /> : <Card.Content>Load More</Card.Content>
+                loading ? <Loader active={true} /> : <Card.Content>Load More</Card.Content>
               }
             </Card>
           </Card.Group>
@@ -225,13 +159,9 @@ class Home extends Component {
     );
   }
 
-  renderUserBased() {
+  renderItemBased() {
     return (
-      <Item.Group>
-        {
-          this.state.userBasedRepos.map((repo) => this.renderRepo(repo))
-        }
-      </Item.Group>
+      <RepoLoader>{this.renderItemBasedWithData}</RepoLoader>
     );
   }
 }
