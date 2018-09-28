@@ -14,6 +14,7 @@ import {
   Card,
   Icon,
 } from 'semantic-ui-react';
+import { Facebook as ContentLoader } from 'react-content-loader';
 
 import '../css/Home.css';
 
@@ -48,7 +49,13 @@ class Home extends Component {
     if (_.isNil(repo)) {
       return (
         <div className='repo-container' key={idx}>
-          loading...
+          <Card>
+            <ContentLoader />
+            <Card.Content extra>
+              <Icon name='sync' />
+              It's loading...
+            </Card.Content>
+          </Card>
         </div>
       );
     }
