@@ -1,5 +1,5 @@
 [![Build Status](https://circleci.com/gh/max0ne/twinkeydow/tree/master.svg?style=shield
-)](https://circleci.com/gh/max0ne/twinkeydow/tree/master)
+)](https://circleci.com/gh/max0ne/twinkeydow/tree/master) ![License](https://img.shields.io/github/license/mashape/apistatus.svg)
 
 # Project Twinkeydow
 
