@@ -15,7 +15,7 @@ The code mainly does 5 things
 
 | Wat | Deployed to | Tools | Description |
 | ------------- |:-:|:-----:|:-:|
-| Gathering Data | AWS EC2 | Node.js | Querying Github API for public activity |
+| [Gathering Data](./github_repo_puller) | AWS EC2 | Node.js | Querying Github API for public activity |
 | [Modeling](./als_thing/compute_feature_vector.ipynb) | AWS EMR | Python, Spark | CF modeling stuff given bunch of data to train with |
 | [Predicting](./api/sim_repo) | AWS Lambda | Python, Serverless | KNN over repo feature vectors with NumPy |
 | [API Hosting](./api/node) | AWS Lambda | TypeScript, Node.js, Serverless | generic web API services, handle misc stuff like OAuth, user authentication |
