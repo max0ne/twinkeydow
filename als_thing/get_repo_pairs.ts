@@ -4,8 +4,8 @@ import * as process from 'process';
 
 const axios = _axios.create({
   auth: {
-    username: 'maxt2e',
-    password: 'Rq6ALoYJzVGXHoN,WTJ',
+    username: process.env.GH_USERNAME,
+    password: process.env.GH_PASSWORD,
   },
 });
 
