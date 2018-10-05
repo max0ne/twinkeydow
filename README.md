@@ -14,7 +14,7 @@ It provides customized Github repo recommendations, based on your previous activ
 The code mainly does 5 things
 
 | Wat | Deployed to | Tools | Description |
-| ------------- |:-:|:-----:|:-:|
+| - |-|-|-|
 | [Gathering Data](./github_repo_puller) | AWS EC2 | Node.js | Querying Github API for public activity |
 | [Modeling](./als_thing/compute_feature_vector.ipynb) | AWS EMR | Python, Spark | CF modeling stuff given bunch of data to train with |
 | [Predicting](./api/sim_repo) | AWS Lambda | Python, Serverless | KNN over repo feature vectors with NumPy |
