@@ -1,9 +1,5 @@
-[![Build Status](https://img.shields.io/circleci/project/gh/max0ne/twinkeydow/master.svg
+[![Build Status](https://circleci.com/gh/max0ne/twinkeydow/tree/master.svg?style=shield
 )](https://circleci.com/gh/max0ne/twinkeydow/tree/master)
-[![Build Status](https://img.shields.io/circleci/project/gh/max0ne/twinkeydow/dev.svg
-)](https://circleci.com/gh/max0ne/twinkeydow/tree/dev)
-[![Build Status](https://img.shields.io/circleci/project/gh/max0ne/twinkeydow.svg
-)](https://circleci.com/gh/max0ne/twinkeydow)
 
 # Project Twinkeydow
 
