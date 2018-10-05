@@ -19,6 +19,6 @@
   },
   "devDependencies": {
     "env-yaml": "^0.1.2",
-    "serverless-offline": "^3.20.1"
+    "serverless-offline": "^3.27.0"
   }
 }
