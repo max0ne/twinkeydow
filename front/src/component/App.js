@@ -9,7 +9,6 @@ import * as middleware from '../redux/middleware';
 import * as api from '../common/api';
 
 import Home from './Home';
-import OAuth_callback from './OAuth_callback';
 import Welcome from './Welcome';
 
 import {
@@ -80,7 +79,6 @@ class App extends Component {
           <Switch>
             <Route path="/home" component={Home} />
             <Route path="/welcome" component={Welcome} />
-            <Route path="/oauth_done" component={OAuth_callback} />
           </Switch>
         </Router>
       </div>
