@@ -65,8 +65,8 @@ class Home extends Component {
       );
     }
 
-    const repo = repoDetails[recomend.from_rid];
-    const basedOnRepo = repoDetails[recomend.to_rid];
+    const repo = repoDetails[recomend.to_rid];
+    const basedOnRepo = repoDetails[recomend.from_rid];
 
     const langs = this.state.repoLangs[repo.id] || (repo.language ? { [repo.language]: 1 } : { });
     const firstLangs = Object.keys(langs)
