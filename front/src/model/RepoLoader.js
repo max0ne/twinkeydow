@@ -3,7 +3,6 @@ import _ from 'lodash';
 
 import RepoSourceLoader from './RepoSourceLoader';
 import RepoSimilarLoader from './RepoSimilarLoader';
-import * as api from '../common/api';
 
 export default class RepoLoader extends React.Component {
   constructor(props) {
@@ -13,8 +12,6 @@ export default class RepoLoader extends React.Component {
     this.similarLoader = new RepoSimilarLoader();
 
     this.state = {
-      repoDetails: { },
-
       // list of RepoSimilar objects
       recommends: [ ],
 
@@ -25,16 +22,6 @@ export default class RepoLoader extends React.Component {
 
   componentDidMount = () => {
     this.loadMore(10);
-  }
-
-  loadRepoDetail = async (rid) => {
-    const repo = await api.getRepoDetail(rid);
-    this.setState((state) => ({
-      repoDetails: {
-        ...state.repoDetails,
-        [rid]: repo,
-      },
-    }));
   }
 
   loadMore = async (nn) => {
@@ -48,7 +35,6 @@ export default class RepoLoader extends React.Component {
       const newRecommends = [];
       while (true) {
         const batch = await this._loadMore();
-        _.map(batch, 'to_rid').forEach(this.loadRepoDetail);
         newRecommends.push(...batch);
         this.setState({
           recommends: [...this.state.recommends, ...newRecommends],
@@ -74,16 +60,7 @@ export default class RepoLoader extends React.Component {
       const newSourceRepos = await this.sourceLoader.pop(10);
 
       // store these new sources into states
-      const newRepoDetailsState = { };
-      newSourceRepos.forEach((repo) => {
-        newRepoDetailsState[repo.id] = repo;
-      });
-      this.setState({
-        repoDetails: {
-          ...this.state.repoDetails,
-          ...newRepoDetailsState,
-        },
-      });
+      this.props.setRepoDetails(newSourceRepos);
 
       sourceRepoIDs = _.map(newSourceRepos, 'id');
     } else {
@@ -114,7 +91,6 @@ export default class RepoLoader extends React.Component {
   render() {
     return this.props.children({
       loadMore: this.loadMore,
-      repoDetails: this.state.repoDetails,
       recommends: this.state.recommends,
       loading: this.state.loading,
     });

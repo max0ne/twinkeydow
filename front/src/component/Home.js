@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import languageMap from 'language-map';
 
@@ -19,6 +18,8 @@ import { Facebook as ContentLoader } from 'react-content-loader';
 import '../css/Home.css';
 
 import RepoLoader from '../model/RepoLoader';
+import RepoDetailLoader from '../model/RepoDetailLoader';
+
 import * as api from '../common/api';
 import Navbar from './Navbar';
 
@@ -45,11 +46,15 @@ class Home extends Component {
     }
   }
 
-  renderRepo(idx, repo, basedOnRepo) {
-    if (_.isNil(repo)) {
+  renderRecommendation(idx, recomend, repoDetails, repoStates, loadRepoDetail) {
+    if (!repoDetails[recomend.from_rid]) {
+      loadRepoDetail(recomend.from_rid);
+    }
+    if (!repoDetails[recomend.to_rid]) {
+      loadRepoDetail(recomend.to_rid);
       return (
         <div className='repo-container' key={idx}>
-          <Card>
+          <Card className='repo-card'>
             <ContentLoader />
             <Card.Content extra>
               <Icon name='sync' />
@@ -60,6 +65,9 @@ class Home extends Component {
       );
     }
 
+    const repo = repoDetails[recomend.to_rid];
+    const basedOnRepo = repoDetails[recomend.from_rid];
+
     const langs = this.state.repoLangs[repo.id] || (repo.language ? { [repo.language]: 1 } : { });
     const firstLangs = Object.keys(langs)
       .filter((lang) => !_.isNil(lang))
@@ -67,7 +75,7 @@ class Home extends Component {
 
     return (
       <div className='repo-container' key={repo.id}>
-        <Card href={repo.html_url} target="_blank" rel="noopener noreferrer">
+        <Card className='repo-card' href={repo.html_url} target="_blank" rel="noopener noreferrer">
           <Card.Content>
             <Card.Header className='home-repo-name'>
               <Image className='home-repo-avatar' circular src={(repo.owner && repo.owner.avatar_url) || ''}></Image>
@@ -128,7 +136,7 @@ class Home extends Component {
     );
   }
 
-  renderItemBasedWithData = ({ loadMore, repoDetails, recommends, loading }) => {
+  renderItemBasedWithData = ({ loadRepoDetail, repoDetails, repoStates }) => ({ loadMore, recommends, loading }) => {
     if (recommends.length === 0) {
       return loading ? this.renderLoading() : this.renderNoRecommendAvailable();
     }
@@ -142,7 +150,7 @@ class Home extends Component {
               <Grid.Column key={col}>{
                 recommends
                   .filter((_, idx) => idx % colcnt === col)
-                  .map((rec, idx) => this.renderRepo(idx, repoDetails[rec.to_rid], repoDetails[rec.from_rid]))
+                .map((rec, idx) => this.renderRecommendation(idx, rec, repoDetails, repoStates, loadRepoDetail))
               }</Grid.Column>
             ))
         }</Grid>
@@ -161,13 +169,14 @@ class Home extends Component {
 
   renderItemBased() {
     return (
-      <RepoLoader>{this.renderItemBasedWithData}</RepoLoader>
+      <RepoDetailLoader>
+        {({ loadRepoDetail, setRepoDetails, repoDetails, repoStates }) =>
+          <RepoLoader setRepoDetails={setRepoDetails}>
+            {this.renderItemBasedWithData({ loadRepoDetail, repoDetails, repoStates })}
+          </RepoLoader>}
+      </RepoDetailLoader>
     );
   }
 }
 
-const mapStateToProps = (state) => ({
-  user: state.user,
-});
-
-export default connect(mapStateToProps)(Home);
+export default Home;
