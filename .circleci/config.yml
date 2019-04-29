@@ -4,9 +4,6 @@ jobs:
     docker:
       - image: max0ne/circleci-node-aws:latest
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "74:1d:f3:a6:c0:4f:54:8a:55:de:65:0c:3a:30:11:ff"
       - checkout
       - run: cd front && npm i
       - run: cd front && npm run build-dev
